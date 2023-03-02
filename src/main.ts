@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -12,6 +13,9 @@ async function bootstrap() {
 
   // 예외 필터 추가
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // 유효성 검사 파이프
+  app.useGlobalPipes(new ValidationPipe());
 
   // swagger 추가
   const config = new DocumentBuilder()
