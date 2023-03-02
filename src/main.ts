@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { winstonLogger } from './common/utils/winston.util';
 
 async function bootstrap() {
@@ -8,6 +9,9 @@ async function bootstrap() {
     // winston 추가
     logger: winstonLogger
   });
+
+  // 예외 필터 추가
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // swagger 추가
   const config = new DocumentBuilder()
