@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { winstonLogger } from './common/utils/winston.util';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    // winston 추가
+    logger: winstonLogger
+  });
 
   // swagger 추가
   const config = new DocumentBuilder()
