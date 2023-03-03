@@ -11,7 +11,6 @@ export class User extends CommonEntity{
         example: 1
     })
     @PrimaryGeneratedColumn('increment')
-    @Column({unique: true})
     id: BigInt
 
     @ApiProperty({
@@ -51,7 +50,7 @@ export class User extends CommonEntity{
     @IsBoolean()
     @IsNotEmpty()
     @Column()
-    term: string
+    term: boolean
 
     @ApiProperty({
         description: '사용자 이메일',
