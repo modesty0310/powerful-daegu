@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { EmailService } from 'src/email/email.service';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
+import { User } from './users.entity';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
@@ -12,10 +14,17 @@ export class UsersService {
         private readonly emailService: EmailService,
     ){}
 
-    async createUser(createUserDto: CreateUserDto) {
-        const existEmail = this.usersRepository.existsByEmail(createUserDto.email);
+    async createUser(dto: CreateUserDto): Promise<User> {
+        const {email, nickname, password, term} = dto;
+        const existEmail = await this.usersRepository.existsByEmail(dto.email);
+        console.log(existEmail);
+        
+        if (existEmail) {
+            throw new UnauthorizedException('해당하는 이메일은 이미 존재합니다.');
+        }
+        const hasedPassword = await bcrypt.hash(password, 10);
 
-
+        return await this.usersRepository.createUser({email, nickname, password: hasedPassword, term});
     }
 
     async createAuthCode(dto: CreateAuthCodeDto): Promise<ReturnAuthCodeDto> {

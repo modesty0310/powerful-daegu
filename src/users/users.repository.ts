@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CreateUserDto } from "./dto/createUser.dto";
 import { User } from "./users.entity";
 
 @Injectable()
@@ -13,5 +14,10 @@ export class UsersRepository {
     async existsByEmail(email: string): Promise<boolean> {
         const result = await this.userRepository.exist({where: {email}})
         return result;
+    }
+
+    async createUser(dto: CreateUserDto):Promise<User> {
+        const user = {...dto, user_type: "origin"};
+        return await this.userRepository.save(user)
     }
 }

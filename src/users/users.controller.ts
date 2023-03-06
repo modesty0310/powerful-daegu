@@ -4,6 +4,7 @@ import { Cache } from 'cache-manager';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
+import { User } from './users.entity';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -50,8 +51,8 @@ export class UsersController {
     }
 
     @Post()
-    async createUser(@Body() dto: CreateUserDto) {
-
+    async createUser(@Body() dto: CreateUserDto):Promise<User> {
+        return this.usersService.createUser(dto);
     }
 
     @Post('password')

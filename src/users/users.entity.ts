@@ -22,15 +22,15 @@ export class User extends CommonEntity{
     @Column()
     password: string
 
-    @ApiProperty({
-        description: '사용자 이름',
-        type: String,
-        example: '기세덕'
-    })
-    @IsString()
-    @IsNotEmpty()
-    @Column()
-    name: string
+    // @ApiProperty({
+    //     description: '사용자 이름',
+    //     type: String,
+    //     example: '기세덕'
+    // })
+    // @IsString()
+    // @IsNotEmpty()
+    // @Column()
+    // name: string
 
     @ApiProperty({
         description: '사용자 닉네임',
