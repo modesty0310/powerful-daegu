@@ -1,6 +1,9 @@
-import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post } from '@nestjs/common';
+import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
+import { Response } from 'express';
+import { AuthService } from 'src/auth/auth.service';
+import { LoginDto } from 'src/auth/dto/login.dto';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -13,11 +16,16 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        private readonly authService: AuthService
     ){}
 
     @Post('login')
-    async login() {
-
+    async login(
+        @Body() dto: LoginDto,
+        @Res({passthrough: true}) response: Response
+    ) {
+        response.cookie('access_token', await this.authService.jwtLogIn(dto), {httpOnly: true});
+        return "로그인"
     }
     @Post('code-create')
     async createAuthCode(@Body() dto: CreateAuthCodeDto): Promise<string> {

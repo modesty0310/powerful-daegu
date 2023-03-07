@@ -17,7 +17,19 @@ export class UsersRepository {
     }
 
     async createUser(dto: CreateUserDto):Promise<User> {
-        const user = {...dto, user_type: "origin"};
+        const {email, password, nickname, term} = dto;
+        console.log(email, password, nickname, term);
+        
+        const user = {email, password, nickname, term, user_type: "origin"};
         return await this.userRepository.save(user)
+    }
+
+    async findUserByEmail(email: string): Promise<User> | null {
+        console.log(email);
+        
+        const user = await this.userRepository.findOne({where: {email}});
+        console.log(user);
+        
+        return user
     }
 }

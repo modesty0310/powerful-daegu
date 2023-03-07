@@ -5,6 +5,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     // app module
     UsersModule,
     EmailModule,
+    AuthModule,
   ]
 })
 export class AppModule implements NestModule {
