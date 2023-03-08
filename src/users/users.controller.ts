@@ -4,6 +4,8 @@ import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
+import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
+import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
@@ -30,9 +32,7 @@ export class UsersController {
         return "로그인"
     }
     @Post('code-create')
-    async createAuthCode(@Body() dto: CreateAuthCodeDto): Promise<string> {
-        console.log(dto);
-        
+    async createAuthCode(@Body() dto: CreateAuthCodeDto): Promise<string> {        
         const {text, success, code} = await this.usersService.createAuthCode(dto);
         if(success) {
             await this.cacheManager.set(dto.email, code, 1000 * 60 * 5);
@@ -47,15 +47,38 @@ export class UsersController {
         return getCode === code;
     }
 
-    @Get('google')
-    async googleLogin() {
-
+    @UseGuards(GoogleSignupGuard)
+    @Get('google/signup')
+    async googleSignUp(
+        @Req() req
+    ) {
+        return await this.usersService.googleSignUp(req.user.email);
     }
-    @Get('naver')
+    @Get('naver/signup')
+    async naverSignUp() {
+        
+    }
+    @Get('kakao/signup')
+    async kakaoSignUp() {
+        
+    }
+    @UseGuards(GoogleLoginGuard)
+    @Get('google/login')
+    async googleLogin(
+        @Req() req, 
+        @Res() response: Response
+    ) {
+        console.log('user.controller', req.user.email);
+        
+        const {access_token} = await this.authService.googleLogIn(req.user.email);
+        response.cookie('access_token', access_token, {httpOnly: true});
+        return "로그인"
+    }
+    @Get('naver/login')
     async naverLogin() {
         
     }
-    @Get('kakao')
+    @Get('kakao/login')
     async kakaoLogin() {
         
     }
@@ -72,13 +95,6 @@ export class UsersController {
 
     @Patch('password')
     async changePassword() {
-        
-    }
-
-    @Get('test')
-    @UseGuards(JwtAuthGuard)
-    async test(@Req() req) {
-        console.log(req.user);
         
     }
 }
