@@ -1,9 +1,10 @@
-import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Res } from '@nestjs/common';
+import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -24,7 +25,8 @@ export class UsersController {
         @Body() dto: LoginDto,
         @Res({passthrough: true}) response: Response
     ) {
-        response.cookie('access_token', await this.authService.jwtLogIn(dto), {httpOnly: true});
+        const {access_token} = await this.authService.jwtLogIn(dto);
+        response.cookie('access_token', access_token, {httpOnly: true});
         return "로그인"
     }
     @Post('code-create')
@@ -70,6 +72,13 @@ export class UsersController {
 
     @Patch('password')
     async changePassword() {
+        
+    }
+
+    @Get('test')
+    @UseGuards(JwtAuthGuard)
+    async test(@Req() req) {
+        console.log(req.user);
         
     }
 }
