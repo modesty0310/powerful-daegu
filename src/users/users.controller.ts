@@ -7,6 +7,8 @@ import { LoginDto } from 'src/auth/dto/login.dto';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IOauth } from 'src/common/interfaces/oauth.interface';
+import { CurrentUser } from './decorators/user.decorator';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -50,9 +52,19 @@ export class UsersController {
     @UseGuards(GoogleSignupGuard)
     @Get('google/signup')
     async googleSignUp(
-        @Req() req
+        @CurrentUser() user: IOauth
     ) {
-        return await this.usersService.googleSignUp(req.user.email);
+        return await this.usersService.googleSignUp(user);
+    }
+    @UseGuards(GoogleLoginGuard)
+    @Get('google/login')
+    async googleLogin(
+        @CurrentUser() user: IOauth,
+        @Res() response: Response
+    ) {                
+        const {access_token} = await this.authService.googleLogIn(user.email);
+        response.cookie('access_token', access_token, {httpOnly: true});
+        return "로그인"
     }
     @Get('naver/signup')
     async naverSignUp() {
@@ -61,18 +73,6 @@ export class UsersController {
     @Get('kakao/signup')
     async kakaoSignUp() {
         
-    }
-    @UseGuards(GoogleLoginGuard)
-    @Get('google/login')
-    async googleLogin(
-        @Req() req, 
-        @Res() response: Response
-    ) {
-        console.log('user.controller', req.user.email);
-        
-        const {access_token} = await this.authService.googleLogIn(req.user.email);
-        response.cookie('access_token', access_token, {httpOnly: true});
-        return "로그인"
     }
     @Get('naver/login')
     async naverLogin() {
@@ -85,7 +85,7 @@ export class UsersController {
 
     @Post()
     async createUser(@Body() dto: CreateUserDto):Promise<User> {
-        return this.usersService.createUser(dto);
+        return await this.usersService.createUser(dto);
     }
 
     @Post('password')

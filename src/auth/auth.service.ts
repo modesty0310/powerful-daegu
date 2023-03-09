@@ -17,14 +17,16 @@ export class AuthService {
         const {email, password} = dto;
 
         const user: User = await this.usersRepository.findUserByEmail(email);
-        console.log(user);
         
         if(!user) {
-            throw new UnauthorizedException('이메일과 비밀번호를 확인해주세요.');
+            throw new UnauthorizedException('회원가입 되지 않은 계정입니다.');
+        }
+
+        if(user && user.user_type !== 'origin') {
+            throw new UnauthorizedException('SNS 회원 가입 계정 입니다.');
         }
 
         const isPasswordValidated: boolean = await bcrypt.compare(password, user.password);
-        console.log(isPasswordValidated);
         
         if(!isPasswordValidated) {
             throw new UnauthorizedException('이메일과 비밀번호를 확인해주세요.');
@@ -36,7 +38,6 @@ export class AuthService {
     }
 
     async googleLogIn(email: string) {
-        console.log("auth.service", email);
         
         const user: User = await this.usersRepository.findUserByEmail(email);
         

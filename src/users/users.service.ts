@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { EmailService } from 'src/email/email.service';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -26,9 +27,7 @@ export class UsersService {
         return await this.usersRepository.createUser({email, nickname, password: hasedPassword, term, user_type});
     }
 
-    async createAuthCode(dto: CreateAuthCodeDto): Promise<ReturnAuthCodeDto> {
-        console.log(dto);
-        
+    async createAuthCode(dto: CreateAuthCodeDto): Promise<ReturnAuthCodeDto> {        
         const existEmail = await this.usersRepository.existsByEmail(dto.email);
         
         if(existEmail) {
@@ -40,14 +39,14 @@ export class UsersService {
         }
     }
 
-    async googleSignUp(email: string): Promise<string> {
-        const existEmail = await this.usersRepository.existsByEmail(email);
+    async googleSignUp(user: IOauth): Promise<string | IOauth> {
+        const existEmail = await this.usersRepository.existsByEmail(user.email);
 
         if(existEmail) {
             return '이미 존재 하는 이메일 입니다.'
         }
 
-        return email
+        return user
     }
 
     setRandomNum(): string {

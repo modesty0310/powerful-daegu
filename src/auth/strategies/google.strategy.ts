@@ -1,5 +1,6 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-google-oauth20";
+import { IOauth } from "src/common/interfaces/oauth.interface";
 
 
 export class GoogleSignupStrategy extends PassportStrategy(Strategy, "google-signup") {
@@ -13,9 +14,11 @@ export class GoogleSignupStrategy extends PassportStrategy(Strategy, "google-sig
     }
 
     async validate(accessToken, refreshToken, profile,) {
-        console.log(accessToken, refreshToken, profile);
-        
-        return profile._json;
+        const result: IOauth = {
+            email: profile._json.email,
+            password: profile._json.sub
+        }
+        return result;
     }
 }
 
@@ -30,8 +33,11 @@ export class GoogleLoginStrategy extends PassportStrategy(Strategy, "google-logi
     }
 
     async validate(accessToken, refreshToken, profile,) {
-        console.log(accessToken, refreshToken, profile);
         
-        return profile._json;
+        const result: IOauth = {
+            email: profile._json.email,
+            password: profile._json.sub
+        }
+        return result;
     }
 }
