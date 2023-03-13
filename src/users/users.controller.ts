@@ -7,6 +7,8 @@ import { LoginDto } from 'src/auth/dto/login.dto';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { KakaoLoginGuard } from 'src/auth/guards/kakao-login.guard';
+import { KakaoSignupGuard } from 'src/auth/guards/kakao-signup.guard';
 import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
 import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
 import { IOauth } from 'src/common/interfaces/oauth.interface';
@@ -85,13 +87,22 @@ export class UsersController {
         response.cookie('access_token', access_token, {httpOnly: true});
         return "로그인"
     }
+    @UseGuards(KakaoSignupGuard)
     @Get('kakao/signup')
-    async kakaoSignUp() {
-        
+    async kakaoSignUp(
+        @CurrentUser() user: IOauth
+    ) {
+        return await this.usersService.socialSignUp(user);
     }
+    @UseGuards(KakaoLoginGuard)
     @Get('kakao/login')
-    async kakaoLogin() {
-        
+    async kakaoLogin(
+        @CurrentUser() user: IOauth,
+        @Res() response: Response
+    ) {
+        const {access_token} = await this.authService.socialLogIn(user.email);
+        response.cookie('access_token', access_token, {httpOnly: true});
+        return "로그인"
     }
 
     @Post()

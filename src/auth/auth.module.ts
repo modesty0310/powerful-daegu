@@ -7,6 +7,7 @@ import { NaverLoginGuard } from './guards/naver-login.guard';
 import { NaverSignupGuard } from './guards/naver-signup.guard';
 import { GoogleLoginStrategy, GoogleSignupStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { KakaoLoginStrategy, KakaoSignupStrategy } from './strategies/kakao.strategy';
 import { NaverLoginStrategy, NaverSignupStrategy } from './strategies/naver.strategy';
 
 @Module({
@@ -19,7 +20,7 @@ import { NaverLoginStrategy, NaverSignupStrategy } from './strategies/naver.stra
     }),
     forwardRef(() => UsersModule)
   ],
-  providers: [AuthService, JwtStrategy, GoogleSignupStrategy, GoogleLoginStrategy, NaverSignupStrategy, NaverLoginStrategy],
+  providers: [AuthService, JwtStrategy, GoogleSignupStrategy, GoogleLoginStrategy, NaverSignupStrategy, NaverLoginStrategy, KakaoSignupStrategy, KakaoLoginStrategy],
   exports: [AuthService]
 })
 export class AuthModule {}
