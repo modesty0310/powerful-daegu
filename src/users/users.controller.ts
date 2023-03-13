@@ -7,6 +7,8 @@ import { LoginDto } from 'src/auth/dto/login.dto';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
+import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
 import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { CurrentUser } from './decorators/user.decorator';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
@@ -54,7 +56,7 @@ export class UsersController {
     async googleSignUp(
         @CurrentUser() user: IOauth
     ) {
-        return await this.usersService.googleSignUp(user);
+        return await this.usersService.socialSignUp(user);
     }
     @UseGuards(GoogleLoginGuard)
     @Get('google/login')
@@ -62,20 +64,29 @@ export class UsersController {
         @CurrentUser() user: IOauth,
         @Res() response: Response
     ) {                
-        const {access_token} = await this.authService.googleLogIn(user.email);
+        const {access_token} = await this.authService.socialLogIn(user.email);
         response.cookie('access_token', access_token, {httpOnly: true});
         return "로그인"
     }
+    @UseGuards(NaverSignupGuard)
     @Get('naver/signup')
-    async naverSignUp() {
-        
+    async naverSignUp(
+        @CurrentUser() user: IOauth
+    ) {
+        return await this.usersService.socialSignUp(user);
+    }
+    @UseGuards(NaverLoginGuard)
+    @Get('naver/login')
+    async naverLogin(
+        @CurrentUser() user: IOauth,
+        @Res() response: Response
+    ) {
+        const {access_token} = await this.authService.socialLogIn(user.email);
+        response.cookie('access_token', access_token, {httpOnly: true});
+        return "로그인"
     }
     @Get('kakao/signup')
     async kakaoSignUp() {
-        
-    }
-    @Get('naver/login')
-    async naverLogin() {
         
     }
     @Get('kakao/login')

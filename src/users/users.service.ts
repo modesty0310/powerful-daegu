@@ -39,7 +39,7 @@ export class UsersService {
         }
     }
 
-    async googleSignUp(user: IOauth): Promise<string | IOauth> {
+    async socialSignUp(user: IOauth): Promise<string | IOauth> {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
 
         if(existEmail) {

@@ -17,10 +17,10 @@ export class UsersRepository {
     }
 
     async createUser(dto: CreateUserDto):Promise<User> {
-        const {email, password, nickname, term} = dto;
+        const {email, password, nickname, term, user_type} = dto;
         console.log(email, password, nickname, term);
         
-        const user = {email, password, nickname, term, user_type: "origin"};
+        const user = {email, password, nickname, term, user_type};
         return await this.userRepository.save(user)
     }
 
