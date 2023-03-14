@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_SECRET,
       database: process.env.DB_NAME,
-      autoLoadEntities:  process.env.NODE_ENV === 'development' ? true : false,
+      autoLoadEntities:  true,
       synchronize: process.env.NODE_ENV === 'development' ? true : false,
       logging: process.env.NODE_ENV === 'development' ? true : false,
     }),
