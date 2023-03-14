@@ -8,16 +8,12 @@ export class KakaoSignupStrategy extends PassportStrategy(Strategy, "kakao-signu
         super({
            clientID: process.env.KAKAO_ID,
            clientSecret: process.env.KAKAO_SECRET,
-           callbackURL: "http://localhost:3000/users/kakao/signup",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/kakao/signup",
            scope: ["account_email"]
         })
     }
 
-    async validate(accessToken, refreshToken, profile,) {
-        console.log(111111111111111111111);
-        
-        console.log(profile, accessToken, refreshToken)
-        
+    async validate(accessToken, refreshToken, profile,) {        
         const result: IOauth = {
             email: profile._json.kakao_account.email,
             password: profile._json.id
@@ -32,7 +28,7 @@ export class KakaoLoginStrategy extends PassportStrategy(Strategy, "kakao-login"
         super({
            clientID: process.env.KAKAO_ID,
            clientSecret: process.env.KAKAO_SECRET,
-           callbackURL: "http://localhost:3000/users/kakao/login",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/kakao/login",
            scope: ["account_email"]
         })
     }

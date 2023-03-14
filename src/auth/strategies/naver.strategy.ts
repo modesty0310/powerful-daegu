@@ -8,7 +8,7 @@ export class NaverSignupStrategy extends PassportStrategy(Strategy, "naver-signu
         super({
            clientID: process.env.NAVER_ID,
            clientSecret: process.env.NAVER_SECRET,
-           callbackURL: "http://localhost:3000/users/naver/signup",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/naver/signup",
         })
     }
 
@@ -27,7 +27,7 @@ export class NaverLoginStrategy extends PassportStrategy(Strategy, "naver-login"
         super({
            clientID: process.env.NAVER_ID,
            clientSecret: process.env.NAVER_SECRET,
-           callbackURL: "http://localhost:3000/users/naver/login",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/naver/login",
         })
     }
 

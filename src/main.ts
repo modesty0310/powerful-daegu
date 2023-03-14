@@ -5,12 +5,24 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { winstonLogger } from './common/utils/winston.util';
+import * as expressBasicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // winston 추가
     logger: winstonLogger
   });
+
+  // 관리자만 접속가능 한 엔드 포인트
+  app.use(
+    ['/api', '/api-json'],
+    expressBasicAuth({
+      challenge: true,
+      users: {
+        [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+      },
+    }),
+  );
 
   // 예외 필터 추가
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -33,7 +45,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-
-  await app.listen(3000);
+  const port = process.env.PORT;
+  await app.listen(port);
 }
 bootstrap();

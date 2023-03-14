@@ -8,7 +8,7 @@ export class GoogleSignupStrategy extends PassportStrategy(Strategy, "google-sig
         super({
            clientID: process.env.GOOGLE_ID,
            clientSecret: process.env.GOOGLE_SECRET,
-           callbackURL: "http://localhost:3000/users/google/signup",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/google/signup",
            scope: ["profile", 'email'],
         })
     }
@@ -27,7 +27,7 @@ export class GoogleLoginStrategy extends PassportStrategy(Strategy, "google-logi
         super({
            clientID: process.env.GOOGLE_ID,
            clientSecret: process.env.GOOGLE_SECRET,
-           callbackURL: "http://localhost:3000/users/google/login",
+           callbackURL: process.env.IP_HOST + process.env.PORT + "/users/google/login",
            scope: ["profile", 'email'],
         })
     }

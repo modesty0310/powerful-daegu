@@ -6,7 +6,6 @@ import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { KakaoLoginGuard } from 'src/auth/guards/kakao-login.guard';
 import { KakaoSignupGuard } from 'src/auth/guards/kakao-signup.guard';
 import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
