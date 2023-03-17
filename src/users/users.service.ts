@@ -6,6 +6,7 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
+import { SocialOauthDto } from './dto/socialOauth.dto';
 import { User } from './users.entity';
 import { UsersRepository } from './users.repository';
 
@@ -40,11 +41,11 @@ export class UsersService {
         }
     }
 
-    async socialSignUp(user: IOauth): Promise<string | IOauth> {
+    async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
 
         if(existEmail) {
-            return '이미 존재 하는 이메일 입니다.'
+            throw new UnauthorizedException("이미 존재하는 이메일 입니다.")
         }
 
         return user

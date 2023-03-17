@@ -1,7 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+
+enum UserType {
+    origin = "origin", 
+    naver = "naver", 
+    google = "google", 
+    kakao = "kakao"
+}
 
 @Entity()
 export class User extends CommonEntity{
@@ -21,16 +28,6 @@ export class User extends CommonEntity{
     @IsString()
     @Column()
     password: string
-
-    // @ApiProperty({
-    //     description: '사용자 이름',
-    //     type: String,
-    //     example: '기세덕'
-    // })
-    // @IsString()
-    // @IsNotEmpty()
-    // @Column()
-    // name: string
 
     @ApiProperty({
         description: '사용자 닉네임',
@@ -64,11 +61,10 @@ export class User extends CommonEntity{
 
     @ApiProperty({
         description: '회원가입 경로',
-        type: String,
-        example: 'naver'
+        enum: UserType
     })
-    @IsString()
+    @IsEnum(UserType)
     @IsNotEmpty()
     @Column()
-    user_type: string
+    user_type: UserType
 }

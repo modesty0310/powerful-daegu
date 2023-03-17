@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: req.url,
-        error
+        error: typeof error === "object" ? error.message : error
       });
   }
 }
