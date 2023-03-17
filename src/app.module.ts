@@ -19,8 +19,8 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_SECRET,
       database: process.env.DB_NAME,
-      autoLoadEntities:  true,
-      synchronize: process.env.NODE_ENV === 'development' ? true : false,
+      synchronize: true,
+      autoLoadEntities: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
     }),
     // mailer

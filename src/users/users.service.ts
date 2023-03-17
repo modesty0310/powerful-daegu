@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { EmailService } from 'src/email/email.service';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
@@ -47,6 +48,18 @@ export class UsersService {
         }
 
         return user
+    }
+
+    async changePassword(dto: ChangePasswordDto) {
+        const {password, checkPassword, email} = dto;
+
+        if(password !== checkPassword) {
+            throw new BadRequestException('비밀번호가 일치하지 않습니다.');
+        }
+
+        const hasedPassword = await bcrypt.hash(password, 10);
+
+        await this.usersRepository.changePassword(hasedPassword, email);
     }
 
     setRandomNum(): string {

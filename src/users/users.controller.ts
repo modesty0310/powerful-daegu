@@ -12,6 +12,7 @@ import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
 import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
 import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { CurrentUser } from './decorators/user.decorator';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -109,13 +110,10 @@ export class UsersController {
         return await this.usersService.createUser(dto);
     }
 
-    @Post('password')
-    async createPasswordCode() {
-
-    }
-
     @Patch('password')
-    async changePassword() {
-        
+    async changePassword(
+        @Body() dto: ChangePasswordDto
+    ) {
+        await this.usersService.changePassword(dto);
     }
 }

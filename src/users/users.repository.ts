@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ChangePasswordDto } from "./dto/changePassword.dto";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { User } from "./users.entity";
 
@@ -29,5 +30,17 @@ export class UsersRepository {
         const user = await this.userRepository.findOne({where: {email}});
         
         return user
+    }
+
+    async changePassword(password: string, email: string) {
+        const result = await this.userRepository
+        .createQueryBuilder()
+        .update()
+        .set({password})
+        .where({email})
+        .execute();
+
+        console.log(result);
+        
     }
 }
