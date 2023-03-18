@@ -1,4 +1,5 @@
-import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
@@ -10,6 +11,7 @@ import { KakaoLoginGuard } from 'src/auth/guards/kakao-login.guard';
 import { KakaoSignupGuard } from 'src/auth/guards/kakao-signup.guard';
 import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
 import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
+import { UploadService } from 'src/upload/upload.service';
 import { CurrentUser } from './decorators/user.decorator';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
@@ -29,7 +31,8 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
+        private readonly uploadService: UploadService
     ){}
 
     @ApiOperation({ summary: '홈페이지 로그인 API'})
@@ -144,5 +147,12 @@ export class UsersController {
         await this.usersService.changePassword(dto);
         
         return {message: "비밀번호 변경 완료 되었습니다."}
+    }
+
+    @Post('profile')
+    @UseInterceptors(FileInterceptor('image'))
+    async changeProfile(@UploadedFile() file: Express.Multer.File) {
+        console.log(file);
+        return await this.uploadService.uploadImage('users', file);
     }
 }

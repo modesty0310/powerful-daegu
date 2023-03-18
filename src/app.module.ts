@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     EmailModule,
     AuthModule,
+    UploadModule,
   ]
 })
 export class AppModule implements NestModule {
