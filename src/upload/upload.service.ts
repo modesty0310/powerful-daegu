@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
+import { string0To1000 } from 'aws-sdk/clients/customerprofiles';
 import { PromiseResult } from 'aws-sdk/lib/request';
-import * as path from 'path';
 
 @Injectable()
 export class UploadService {
@@ -24,24 +24,41 @@ export class UploadService {
         key: string;
         s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
         contentType: string;
+        url: string
     }> {
+        console.log(file);
+        
         try {
-            const key = `${folder}/${Date.now()}_${path.basename(
-              file.originalname,
-            )}`.replace(/ /g, '');
+            const key = `${folder}/${Date.now()}_${Buffer.from(file.originalname, 'latin1').toString('utf-8')}`.replace(/ /g, '');
       
             const s3Object = await this.awsS3
-              .putObject({
+            .putObject({
                 Bucket: this.S3_BUCKET_NAME,
                 Key: key,
                 Body: file.buffer,
                 ACL: 'public-read',
                 ContentType: file.mimetype,
-             })
+            })
             .promise();
-            return { key, s3Object, contentType: file.mimetype };
+            const url = await this.getUrl(key);
+            return { key, s3Object, contentType: file.mimetype, url };
           } catch (error) {
             throw new BadRequestException(`File upload failed : ${error}`);
           }
+    }
+
+    async getUrl(key: string0To1000) {
+        const params = { Bucket: this.S3_BUCKET_NAME, Key: key };
+
+        const imageUrl: string = await new Promise((r) => 
+            this.awsS3.getSignedUrl('getObject', params, async (err, url) => {
+                if (err) {
+                throw err;
+                }
+                r(url.split('?')[0]); //  return object url
+            }),
+        );
+
+        return imageUrl;
     }
 }

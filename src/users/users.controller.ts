@@ -1,6 +1,6 @@
 import { Body, CACHE_MANAGER, Controller, Get, Inject, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
@@ -152,7 +152,6 @@ export class UsersController {
     @Post('profile')
     @UseInterceptors(FileInterceptor('image'))
     async changeProfile(@UploadedFile() file: Express.Multer.File) {
-        console.log(file);
         return await this.uploadService.uploadImage('users', file);
     }
 }
