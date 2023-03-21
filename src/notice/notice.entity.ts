@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
 import { User } from "src/users/users.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 enum Category {
     guide = "guide", 
@@ -19,18 +19,21 @@ export class Notice extends CommonEntity {
     @PrimaryGeneratedColumn('increment')
     id: BigInt
 
-    @ApiProperty({
-        description: '작성자 아이디',
-        type: User,
-        example: 1
-    })
+    @ApiProperty({ type: () => User })
     @IsNotEmpty()
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, (writer: User) => writer.notice)
+    @JoinColumn([
+        // foreignkey 정보들
+        {
+          name: 'writer' /* db에 저장되는 필드 이름 */,
+          referencedColumnName: 'id' /* USER의 id */,
+        },
+    ])
     writer: User
 
     @ApiProperty({
         description: '공지사항 제목',
-        type: String,
+        type: () => String,
         example: "공지사항 입니다."
     })
     @Column()
@@ -40,7 +43,7 @@ export class Notice extends CommonEntity {
 
     @ApiProperty({
         description: '공지사항 본문',
-        type: String,
+        type: () => String,
         example: "공지사항 입니다."
     })
     @Column()
@@ -50,7 +53,6 @@ export class Notice extends CommonEntity {
 
     @ApiProperty({
         description: '공지사항 카테고리',
-        type: Category,
         example: "inspection"
     })
     @Column({

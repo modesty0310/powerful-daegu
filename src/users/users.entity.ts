@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Notice } from "src/notice/notice.entity";
+import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 enum UserType {
     origin = "origin", 
@@ -97,4 +98,9 @@ export class User extends CommonEntity{
         default: UserRole.user
     })
     role: UserRole
+
+    @OneToMany(() => Notice, (notice: Notice) => notice.writer, {
+        cascade: true, // 사용자를 통해 블로그가 추가, 수정, 삭제되고 사용자가 저장되면 추가된 블로그도 저장된다.
+    })
+    notice: Notice
 }

@@ -40,11 +40,11 @@ import { NoticeModule } from './notice/notice.module';
       ttl: 5, // 디폴트 만료시간
     }),
     // app module
+    NoticeModule,
     UsersModule,
     EmailModule,
     AuthModule,
     UploadModule,
-    NoticeModule,
   ]
 })
 export class AppModule implements NestModule {

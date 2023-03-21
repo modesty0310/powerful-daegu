@@ -22,7 +22,7 @@ export class UsersRepository {
         console.log(email, password, nickname, term);
         
         const user = {email, password, nickname, term, user_type};
-        return await this.userRepository.save(user)
+        return await this.userRepository.save(user);
     }
 
     async findUserByEmail(email: string): Promise<User> | null {
