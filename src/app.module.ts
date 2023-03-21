@@ -7,6 +7,7 @@ import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { UploadModule } from './upload/upload.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_SECRET,
       database: process.env.DB_NAME,
-      synchronize: false,
+      synchronize: true,
       autoLoadEntities: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
     }),
@@ -43,6 +44,7 @@ import { UploadModule } from './upload/upload.module';
     EmailModule,
     AuthModule,
     UploadModule,
+    NoticeModule,
   ]
 })
 export class AppModule implements NestModule {

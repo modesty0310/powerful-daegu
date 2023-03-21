@@ -70,7 +70,10 @@ export class User extends CommonEntity{
     })
     @IsEnum(UserType)
     @IsNotEmpty()
-    @Column()
+    @Column({
+        type: "enum",
+        enum: UserType,
+    })
     user_type: UserType
 
     @ApiProperty({
@@ -88,6 +91,10 @@ export class User extends CommonEntity{
     })
     @IsEnum(UserRole)
     @IsNotEmpty()
-    @Column({default: "user"})
+    @Column({
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.user
+    })
     role: UserRole
 }
