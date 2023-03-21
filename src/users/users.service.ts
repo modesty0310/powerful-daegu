@@ -2,7 +2,9 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import * as bcrypt from 'bcrypt';
 import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { EmailService } from 'src/email/email.service';
+import { UploadService } from 'src/upload/upload.service';
 import { ChangePasswordDto } from './dto/changePassword.dto';
+import { ChangeProfileDto } from './dto/changeProfile.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
@@ -15,6 +17,7 @@ export class UsersService {
     constructor(
         private readonly usersRepository: UsersRepository,
         private readonly emailService: EmailService,
+        private readonly uploadService: UploadService
     ){}
 
     async createUser(dto: CreateUserDto): Promise<User> {
@@ -40,6 +43,13 @@ export class UsersService {
             return {text: '작성한 이메일로 인증 코드를 보냈습니다.', success: true, code};
         }
     }
+    setRandomNum(): string {
+        let str = '';
+        for (let i = 0; i < 6; i++) {
+            str += Math.floor(Math.random() * 10);
+        }
+        return str;
+    }
 
     async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
@@ -63,11 +73,29 @@ export class UsersService {
         await this.usersRepository.changePassword(hasedPassword, email);
     }
 
-    setRandomNum(): string {
-        let str = '';
-        for (let i = 0; i < 6; i++) {
-            str += Math.floor(Math.random() * 10);
+    async changeProfile(dto: ChangeProfileDto, user, file: Express.Multer.File) {
+        const existEmail = await this.usersRepository.existsByEmail(user.email);
+        console.log(file);
+        
+        if(!existEmail) {
+            throw new UnauthorizedException("권한이 없습니다.")
         }
-        return str;
+        const currentUser = await this.usersRepository.findUserByEmail(user.email);
+
+        if(currentUser.profile && file) {
+            const key = currentUser.profile.split(".amazonaws.com/")[1];
+            console.log(key);
+            
+            await this.uploadService.deleteS3Object(key);
+        }
+        console.log(currentUser);
+        let url = null;
+        if(file) {
+            const result = await this.uploadService.uploadFileToS3('users', file);
+            url = result.url;
+        }
+
+        await this.usersRepository.changeProfile(url, dto.nickname, user.email);
+        return;
     }
 }

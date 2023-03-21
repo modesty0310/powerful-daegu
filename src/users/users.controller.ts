@@ -7,6 +7,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { KakaoLoginGuard } from 'src/auth/guards/kakao-login.guard';
 import { KakaoSignupGuard } from 'src/auth/guards/kakao-signup.guard';
 import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
@@ -150,21 +151,20 @@ export class UsersController {
         return {message: "비밀번호 변경 완료 되었습니다."}
     }
     
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
     @Post('profile')
     async changeProfile(
         @Body() dto: ChangeProfileDto,
+        @CurrentUser() user,
         @UploadedFile(
             new ParseFilePipeBuilder()
             .addFileTypeValidator({fileType:  /(png|jpg|jpeg)$/})
-            .build({
-            fileIsRequired: false,
-            }),
+            .build({fileIsRequired: false}),
         ) file?: Express.Multer.File,
     ) {
-        console.log(file, dto.nickname);
-        
-        // return await this.uploadService.uploadImage('users', file);
+        await this.usersService.changeProfile(dto, user, file);
+        return {message: "프로필 변경 완료 되었습니다."}
     }
 }
 

@@ -39,8 +39,14 @@ export class UsersRepository {
         .set({password})
         .where({email})
         .execute();
+    }
 
-        console.log(result);
-        
+    async changeProfile(profile: string | null, nickname: string, email: string) {
+        const result = await this.userRepository
+        .createQueryBuilder()
+        .update()
+        .set({profile, nickname})
+        .where({email})
+        .execute();
     }
 }

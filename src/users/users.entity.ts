@@ -10,6 +10,11 @@ enum UserType {
     kakao = "kakao"
 }
 
+enum UserRole {
+    admin = "admin",
+    user = "user"
+}
+
 @Entity()
 export class User extends CommonEntity{
     @ApiProperty({
@@ -67,4 +72,22 @@ export class User extends CommonEntity{
     @IsNotEmpty()
     @Column()
     user_type: UserType
+
+    @ApiProperty({
+        description: '유저 프로필 사진',
+        enum: String
+    })
+    @IsString()
+    @Column({nullable: true})
+    profile: string
+
+    @ApiProperty({
+        description: '유저 권한',
+        enum: UserRole,
+        default: "user"
+    })
+    @IsEnum(UserRole)
+    @IsNotEmpty()
+    @Column({default: "user"})
+    role: UserRole
 }

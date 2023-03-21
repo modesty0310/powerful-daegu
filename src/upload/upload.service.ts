@@ -17,7 +17,7 @@ export class UploadService {
         this.S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME; // nest-s3
     }
 
-    async uploadImage(
+    async uploadFileToS3(
         folder: string,
         file: Express.Multer.File
     ): Promise<{
@@ -53,12 +53,31 @@ export class UploadService {
         const imageUrl: string = await new Promise((r) => 
             this.awsS3.getSignedUrl('getObject', params, async (err, url) => {
                 if (err) {
-                throw err;
+                    throw err;
                 }
                 r(url.split('?')[0]); //  return object url
             }),
         );
 
         return imageUrl;
+    }
+
+    async deleteS3Object(
+        key: string,
+        callback?: (err: AWS.AWSError, data: AWS.S3.DeleteObjectOutput) => void,
+    ): Promise<{ success: true }> {
+        try {
+            await this.awsS3.deleteObject(
+                {
+                    Bucket: this.S3_BUCKET_NAME,
+                    Key: key,
+                },
+                callback,
+            )
+            .promise();
+            return { success: true };
+        } catch (error) {
+            throw new BadRequestException(`Failed to delete file : ${error}`);
+        }
     }
 }
