@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { IOauth } from 'src/common/interfaces/oauth.interface';
 import { EmailService } from 'src/email/email.service';
 import { UploadService } from 'src/upload/upload.service';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ChangeProfileDto } from './dto/changeProfile.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
+import { CurrentUserDto } from './dto/currentUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
 import { SocialOauthDto } from './dto/socialOauth.dto';
 import { User } from './users.entity';
@@ -73,7 +73,7 @@ export class UsersService {
         await this.usersRepository.changePassword(hasedPassword, email);
     }
 
-    async changeProfile(dto: ChangeProfileDto, user, file: Express.Multer.File) {
+    async changeProfile(dto: ChangeProfileDto, user: CurrentUserDto, file: Express.Multer.File) {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
         console.log(file);
         
@@ -97,5 +97,10 @@ export class UsersService {
 
         await this.usersRepository.changeProfile(url, dto.nickname, user.email);
         return;
+    }
+
+    async getUser(user: CurrentUserDto): Promise<User> {
+        const result: User = await this.usersRepository.getUser(user.sub);
+        return result;
     }
 }

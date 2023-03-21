@@ -49,4 +49,20 @@ export class UsersRepository {
         .where({email})
         .execute();
     }
+
+    async getUser(id: number): Promise<User> {
+        const result: User = await this.userRepository
+        .createQueryBuilder('user')
+        .select([
+            'user.id', 
+            'user.email',
+            'user.nickname',
+            'user.profile',
+            'user.role'
+        ])
+        .where("user.id = :id", { id })
+        .getOne();
+
+        return result;
+    }
 }

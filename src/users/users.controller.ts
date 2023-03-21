@@ -1,6 +1,6 @@
 import { Body, CACHE_MANAGER, Controller, Get, Inject, ParseFilePipeBuilder, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
@@ -19,6 +19,7 @@ import { ChangeProfileDto } from './dto/changeProfile.dto';
 import { CheckAuthCodeDto } from './dto/checkAuthCode.dto';
 import { CreateAuthCodeDto } from './dto/createAuthCode.dto';
 import { CreateUserDto } from './dto/createUser.dto';
+import { CurrentUserDto } from './dto/currentUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
 import { SocialOauthDto } from './dto/socialOauth.dto';
 import { CodeCheckFail, CodeCheckSuccess } from './swagger/code-check';
@@ -151,12 +152,26 @@ export class UsersController {
         return {message: "비밀번호 변경 완료 되었습니다."}
     }
     
+    @ApiOperation({summary: '프로필 변경'})
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                nickname: { type: 'string' },
+                image: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
     @Post('profile')
     async changeProfile(
         @Body() dto: ChangeProfileDto,
-        @CurrentUser() user,
+        @CurrentUser() user: CurrentUserDto,
         @UploadedFile(
             new ParseFilePipeBuilder()
             .addFileTypeValidator({fileType:  /(png|jpg|jpeg)$/})
@@ -165,6 +180,14 @@ export class UsersController {
     ) {
         await this.usersService.changeProfile(dto, user, file);
         return {message: "프로필 변경 완료 되었습니다."}
+    }
+
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    async getUser(
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        return await this.usersService.getUser(user);  
     }
 }
 
