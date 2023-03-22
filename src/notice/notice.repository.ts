@@ -12,13 +12,20 @@ export class NoticeRepository {
         private readonly noticeRepository: Repository<Notice>
     ) {}
 
-    async createNotice(user: CurrentUserDto) {
+    async createNotice(dto: CreateNoticeDto, user: CurrentUserDto) {
+        const { title, content, category } = dto;
         await this.noticeRepository
         .createQueryBuilder()
         .insert()
         .into(Notice)
         .values({
-
+            writer: {
+                id: user.sub
+            },
+            title,
+            content,
+            category
         })
+        .execute()
     }
 }

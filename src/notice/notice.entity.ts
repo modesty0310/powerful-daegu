@@ -21,13 +21,9 @@ export class Notice extends CommonEntity {
 
     @ApiProperty({ type: () => User })
     @IsNotEmpty()
-    @ManyToOne(() => User, (writer: User) => writer.notice)
+    @ManyToOne(() => User, (user) => user.notice, {nullable: false})
     @JoinColumn([
-        // foreignkey 정보들
-        {
-          name: 'writer' /* db에 저장되는 필드 이름 */,
-          referencedColumnName: 'id' /* USER의 id */,
-        },
+        { name: "writer", referencedColumnName: "id" },
     ])
     writer: User
 
@@ -46,7 +42,7 @@ export class Notice extends CommonEntity {
         type: () => String,
         example: "공지사항 입니다."
     })
-    @Column()
+    @Column('text')
     @IsNotEmpty()
     @IsString()
     content: string

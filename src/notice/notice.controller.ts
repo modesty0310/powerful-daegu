@@ -3,6 +3,7 @@ import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/createNotice.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 
 @Controller('notice')
@@ -22,11 +23,14 @@ export class NoticeController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     createNotice(
         @Body() dto: CreateNoticeDto,
         @CurrentUser() user: CurrentUserDto
     ) {
-        this.noticeService.createNotice(user)
+        console.log(dto,);
+        
+        this.noticeService.createNotice(dto, user);
     }
 
     @Delete()
