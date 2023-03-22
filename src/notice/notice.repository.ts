@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateNoticeDto } from "./dto/createNotice.dto";
+import { UpdateNoticeDto } from "./dto/updateNotice.dto";
 import { Notice } from "./notice.entity";
 
 @Injectable()
@@ -26,6 +27,42 @@ export class NoticeRepository {
             content,
             category
         })
-        .execute()
+        .execute();
+    }
+
+    async getAllNotice() {
+        
+    }
+
+    async getNotice(id: number) {
+        const result = await this.noticeRepository
+        .createQueryBuilder()
+        .select()
+        .where("notice.id = :id", {id})
+        .getOne()
+
+        return result;
+    }
+
+    async deleteNotice(id: number) {
+        await this.noticeRepository
+        .createQueryBuilder()
+        .delete()
+        .from(Notice)
+        .where('id = :id', {id})
+        .execute();
+    }
+
+    async updateNotice(dto: UpdateNoticeDto) {
+        const {id, content, title, category} = dto;
+
+        const result = await this.noticeRepository
+        .createQueryBuilder()
+        .update(Notice)
+        .set({content, title, category})
+        .where('id = :id', {id})
+        .execute();
+
+        return result;
     }
 }
