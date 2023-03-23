@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { CreateNoticeDto } from "./dto/createNotice.dto";
 import { UpdateNoticeDto } from "./dto/updateNotice.dto";
-import { Notice } from "./notice.entity";
+import { Category, Notice } from "./notice.entity";
 
 @Injectable()
 export class NoticeRepository {
@@ -30,14 +30,10 @@ export class NoticeRepository {
         .execute();
     }
 
-    async getAllNotice() {
-        
-    }
-
     async getNotice(id: number) {
         const result = await this.noticeRepository
-        .createQueryBuilder()
-        .select()
+        .createQueryBuilder('notice')
+        .leftJoinAndSelect('notice.writer', 'writer')
         .where("notice.id = :id", {id})
         .getOne()
 
@@ -63,6 +59,20 @@ export class NoticeRepository {
         .where('id = :id', {id})
         .execute();
 
+        return result;
+    }
+
+    async getAllNotice(page: number, category: Category) {
+        const result = await this.noticeRepository.findAndCount({
+            select: ['id', 'category', 'content', 'createdAt', 'title', 'writer'],
+            relations: {writer: true},
+            where: category !== 'all' ? {category} : {},
+            order: {createdAt: 'DESC'},
+            skip: (page - 1) * 10,
+            take: 10,
+        })
+        console.log(result);
+        
         return result;
     }
 }

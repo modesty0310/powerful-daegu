@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateNoticeDto } from './dto/createNotice.dto';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
+import { Category } from './notice.entity';
 // import { CreateNoticeDto } from './dto/createNotice.dto';
 import { NoticeRepository } from './notice.repository';
 
@@ -31,6 +32,10 @@ export class NoticeService {
     }
 
     async updateNotice(dto: UpdateNoticeDto) {
-        return this.noticeRepository.updateNotice(dto);
+        return await this.noticeRepository.updateNotice(dto);
+    }
+
+    async getAllNotice(page: number, category: Category) {
+        return await this.noticeRepository.getAllNotice(page, category);
     }
 }

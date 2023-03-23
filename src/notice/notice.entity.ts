@@ -4,9 +4,10 @@ import { CommonEntity } from "src/common/entities/common.entity";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-enum Category {
+export enum Category {
     guide = "guide", 
-    inspection = "inspection", 
+    inspection = "inspection",
+    all='all',
 }
 
 @Entity()

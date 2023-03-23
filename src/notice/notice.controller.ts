@@ -5,6 +5,7 @@ import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/createNotice.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
+import { Category } from './notice.entity';
 
 
 @Controller('notice')
@@ -13,16 +14,19 @@ export class NoticeController {
         private readonly noticeService: NoticeService
     ) {}
 
+    @Get('all')
+    async getAllNotice(
+        @Query('category') category: Category,
+        @Query('page', ParseIntPipe) page: number
+    ) {
+        return await this.noticeService.getAllNotice(page, category)
+    }    
+
     @Get(':id')
     async getNotice (
         @Param('id', ParseIntPipe) id: number
     ) {
         return await this.noticeService.getNotice(id);
-    }
-
-    @Get('all')
-    getAllNotice() {
-
     }
 
     @Post()
