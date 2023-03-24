@@ -42,6 +42,8 @@ export class NoticeRepository {
 
     async deleteNotice(idArr: number[]) {
         for(const id of idArr) {
+            if(typeof id !== 'number') throw new BadRequestException('공지사항의 아이디를 정확히 보내주세요.');
+            
             const result = await this.noticeRepository
             .createQueryBuilder()
             .update(Notice)
@@ -66,6 +68,8 @@ export class NoticeRepository {
         .where('id = :id', {id})
         .execute();
 
+        if(result.affected === 0) throw new BadRequestException("공지사항이 존재 하지 않습니다.");
+        
         return result;
     }
 

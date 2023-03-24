@@ -1,19 +1,10 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger"
 
-export class LoginSuccess {
-    @ApiProperty({
-        description: '성공 메세지',
-        type: String,
-        example: "로그인"
-    })
-    message: string
-}
-
-export class LoginFail {
+export class FailResponseMessageDto {
     @ApiProperty({
         description: 'stats_code',
         type: Number,
-        example: 401
+        example: 400
     })
     statusCode: number
 
@@ -34,7 +25,7 @@ export class LoginFail {
     @ApiProperty({
         description: '에러 메세지',
         type: String,
-        example: "회원가입 되지 않은 계정입니다."
+        example: "에러 메세지"
     })
     error: string
 }

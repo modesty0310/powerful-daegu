@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Notice } from "../notice.entity";
 
-export class NoticeType {
+export class ResponseNoticeDto {
     @ApiProperty({
         description: '공지사항',
         example: 

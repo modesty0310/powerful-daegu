@@ -12,6 +12,8 @@ import { KakaoLoginGuard } from 'src/auth/guards/kakao-login.guard';
 import { KakaoSignupGuard } from 'src/auth/guards/kakao-signup.guard';
 import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
 import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
+import { FailResponseMessageDto } from 'src/common/dto/failResponseMessage.dto';
+import { SuccessReponseMessageDto } from 'src/common/dto/successReponseMessage.dto';
 import { UploadService } from 'src/upload/upload.service';
 import { CurrentUser } from './decorators/user.decorator';
 import { ChangePasswordDto } from './dto/changePassword.dto';
@@ -23,7 +25,6 @@ import { CurrentUserDto } from './dto/currentUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
 import { SocialOauthDto } from './dto/socialOauth.dto';
 import { CodeCheckFail, CodeCheckSuccess } from './swagger/code-check';
-import { LoginFail, LoginSuccess } from './swagger/login';
 import { SocialFail } from './swagger/social';
 import { User } from './users.entity';
 import { UsersService } from './users.service';
@@ -39,8 +40,8 @@ export class UsersController {
     ){}
 
     @ApiOperation({ summary: '홈페이지 로그인 API'})
-    @ApiResponse({status: 201, description:"로그인", type: LoginSuccess})
-    @ApiResponse({status: 401, description:"로그인 실패", type: LoginFail})
+    @ApiResponse({status: 200, description:"로그인", type: SuccessReponseMessageDto})
+    @ApiResponse({status: 400, description:"로그인 실패", type: FailResponseMessageDto})
     @Post('login')
     async login(
         @Body() dto: LoginDto,
@@ -52,8 +53,8 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: '이메일 확인 코드 발급'})
-    @ApiResponse({status: 201, description:"성공", type: ReturnAuthCodeDto})
-    @ApiResponse({status: 401, description:"실패", type: ReturnAuthCodeDto})
+    @ApiResponse({status: 200, description:"성공", type: ReturnAuthCodeDto})
+    @ApiResponse({status: 400, description:"실패", type: ReturnAuthCodeDto})
     @Post('code-create')
     async createAuthCode(@Body() dto: CreateAuthCodeDto): Promise<ReturnAuthCodeDto> {        
         const {text, success, code} = await this.usersService.createAuthCode(dto);
@@ -64,7 +65,7 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: '이메일 확인 코드 체크'})
-    @ApiResponse({status: 201, description:"성공", type: CodeCheckSuccess})
+    @ApiResponse({status: 200, description:"성공", type: CodeCheckSuccess})
     @ApiResponse({status: 401, description:"실패", type: CodeCheckFail})
     @Post('code-check')
     async checkAuthCode(@Body() dto: CheckAuthCodeDto): Promise<CodeCheckSuccess> {
@@ -75,8 +76,8 @@ export class UsersController {
     }
 
     @ApiOperation({ summary: '구글 회원가입'})
-    @ApiResponse({status: 201, description:"성공", type: SocialOauthDto})
-    @ApiResponse({status: 401, description:"구글 회원가입 실패", type: SocialFail})
+    @ApiResponse({status: 200, description:"성공", type: SocialOauthDto})
+    @ApiResponse({status: 400, description:"구글 회원가입 실패", type: FailResponseMessageDto})
     @UseGuards(GoogleSignupGuard)
     @Get('google/signup')
     async googleSignUp(
@@ -85,8 +86,8 @@ export class UsersController {
         return await this.usersService.socialSignUp(user);
     }
     @ApiOperation({ summary: '구글 로그인'})
-    @ApiResponse({status: 201, description:"성공", type: LoginSuccess})
-    @ApiResponse({status: 401, description:"구글 로그인 실패", type: LoginFail})
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
+    @ApiResponse({status: 400, description:"구글 로그인 실패", type: FailResponseMessageDto})
     @UseGuards(GoogleLoginGuard)
     @Get('google/login')
     async googleLogin(
@@ -134,15 +135,15 @@ export class UsersController {
 
     @ApiOperation({ summary: '회원가입'})
     @ApiResponse({status: 201, description:"성공", type: User})
-    @ApiResponse({status: 401, description:"실패", type: LoginFail})  
+    @ApiResponse({status: 401, description:"실패", type: FailResponseMessageDto})  
     @Post()
     async createUser(@Body() dto: CreateUserDto):Promise<User> {
         return await this.usersService.createUser(dto);
     }
 
     @ApiOperation({ summary: '비밀번호 변경'})
-    @ApiResponse({status: 201, description:"성공", type: LoginSuccess})
-    @ApiResponse({status: 401, description:"실패", type: LoginFail})
+    @ApiResponse({status: 201, description:"성공", type: SuccessReponseMessageDto})
+    @ApiResponse({status: 401, description:"실패", type: FailResponseMessageDto})
     @Patch('password')
     async changePassword(
         @Body() dto: ChangePasswordDto
@@ -151,7 +152,8 @@ export class UsersController {
         
         return {message: "비밀번호 변경 완료 되었습니다."}
     }
-    
+
+    @Post('profile')
     @ApiOperation({summary: '프로필 변경'})
     @ApiConsumes('multipart/form-data')
     @ApiBody({
@@ -166,9 +168,9 @@ export class UsersController {
             },
         },
     })
+    @ApiResponse({status: 201, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('image'))
-    @Post('profile')
     async changeProfile(
         @Body() dto: ChangeProfileDto,
         @CurrentUser() user: CurrentUserDto,
@@ -183,10 +185,11 @@ export class UsersController {
     }
 
     @Get()
+    @ApiResponse({status: 201, description:"성공", type: User})
     @UseGuards(JwtAuthGuard)
     async getUser(
         @CurrentUser() user: CurrentUserDto
-    ) {
+    ): Promise<User> {
         return await this.usersService.getUser(user);  
     }
 }

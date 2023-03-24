@@ -7,11 +7,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { Category } from './notice.entity';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllNotice } from './swagger/allNotice';
-import { NoticeType } from './swagger/notice';
+import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseAllNotice } from './dto/responseAllNotice.dto';
 import { SuccessResponseInterceptor } from 'src/common/interceptors/success-response.interceptor';
+import { ResponseNoticeDto } from './dto/responseNotice.dto';
+import { ResponseCreateNoticeDto } from './dto/responseCreateNotice.dto';
+import { SuccessReponseMessageDto } from 'src/common/dto/successReponseMessage.dto';
 
 @ApiTags('notice')
 @Controller('notice')
@@ -50,7 +51,7 @@ export class NoticeController {
         required: true,
         description: '가져올 공지사항 아이디'
     })
-    @ApiResponse({status: 200, description:"성공", type: NoticeType})
+    @ApiResponse({status: 200, description:"성공", type: ResponseNoticeDto})
     @UseGuards(JwtAuthGuard)
     async getNotice (
         @Param('id', ParseIntPipe) id: number
@@ -60,7 +61,7 @@ export class NoticeController {
     }
 
     @Post()
-    @ApiResponse({status: 200, description:"성공", type: '게시물을 생성 하였습니다.'})
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     async createNotice(
@@ -74,21 +75,31 @@ export class NoticeController {
     }
 
     @Delete()
+    @ApiBody({
+        description: '삭제할 공지사항 아이디 array',
+        schema: {
+            type: 'array',
+            items: {type: 'number'}
+        }
+    })
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     async deleteNotice(
-        @Body('id', ParseArrayPipe) id: number[]
+        @Body('id', new ParseArrayPipe({items: Number})) id: number[]
     ) {
         await this.noticeService.deleteNotice(id);
         return {message: '게시물을 삭제 하였습니다.'};
     }
 
     @Patch()
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
-    updateNotice(
+    async updateNotice(
         @Body() dto: UpdateNoticeDto
     ) {
-        return this.noticeService.updateNotice(dto);
+        await this.noticeService.updateNotice(dto);
+        return {message: '게시물을 수정 하였습니다.'};
     }
 }

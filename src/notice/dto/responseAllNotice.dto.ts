@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CommonSuccess } from "src/common/dto/commonSuccess.dto";
 import { Notice } from "../notice.entity";
 
 export class ResponseAllNotice {
