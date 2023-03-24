@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
 import { Notice } from "src/notice/notice.entity";
@@ -33,6 +34,7 @@ export class User extends CommonEntity{
     })
     @IsString()
     @Column()
+    @Exclude()
     password: string
 
     @ApiProperty({
