@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Like, Repository } from "typeorm";
@@ -40,13 +40,20 @@ export class NoticeRepository {
         return result;
     }
 
-    async deleteNotice(id: number) {
-        await this.noticeRepository
-        .createQueryBuilder()
-        .delete()
-        .from(Notice)
-        .where('id = :id', {id})
-        .execute();
+    async deleteNotice(idArr: number[]) {
+        for(const id of idArr) {
+            const result = await this.noticeRepository
+            .createQueryBuilder()
+            .update(Notice)
+            .set({deletedAt: true})
+            .where('id = :id', {id})
+            .execute();
+
+            console.log(result);
+            if( result.affected === 0 ) {
+                throw new BadRequestException('존재하지 않는 게시글 입니다.');
+            }
+        }
     }
 
     async updateNotice(dto: UpdateNoticeDto) {
@@ -71,7 +78,6 @@ export class NoticeRepository {
             skip: (page - 1) * 10,
             take: 10,
         })
-        console.log(result);
         
         return result;
     }

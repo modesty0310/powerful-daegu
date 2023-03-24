@@ -27,7 +27,7 @@ export class NoticeService {
         return notice;
     }
 
-    async deleteNotice(id: number) {
+    async deleteNotice(id: number[]) {
        await this.noticeRepository.deleteNotice(id);
     }
 

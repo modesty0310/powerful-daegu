@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { NoticeService } from './notice.service';
@@ -6,6 +6,7 @@ import { CreateNoticeDto } from './dto/createNotice.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { Category } from './notice.entity';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 
 @Controller('notice')
@@ -15,6 +16,7 @@ export class NoticeController {
     ) {}
 
     @Get('all')
+    @UseGuards(JwtAuthGuard)
     async getAllNotice(
         @Query('category') category: Category,
         @Query('page', ParseIntPipe) page: number
@@ -23,6 +25,7 @@ export class NoticeController {
     }    
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getNotice (
         @Param('id', ParseIntPipe) id: number
     ) {
@@ -30,6 +33,7 @@ export class NoticeController {
     }
 
     @Post()
+    @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     createNotice(
         @Body() dto: CreateNoticeDto,
@@ -40,15 +44,19 @@ export class NoticeController {
         this.noticeService.createNotice(dto, user);
     }
 
-    @Delete(':id')
+    @Delete()
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     async deleteNotice(
-        @Param('id', ParseIntPipe) id: number
+        @Body('id', ParseArrayPipe) id: number[]
     ) {
         await this.noticeService.deleteNotice(id);
         return {message: '게시물을 삭제 하였습니다.'}
     }
 
     @Patch()
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     updateNotice(
         @Body() dto: UpdateNoticeDto
     ) {
