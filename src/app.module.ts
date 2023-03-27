@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
 import { NoticeModule } from './notice/notice.module';
+import { FaqModule } from './faq/faq.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { NoticeModule } from './notice/notice.module';
     EmailModule,
     AuthModule,
     UploadModule,
+    FaqModule,
   ]
 })
 export class AppModule implements NestModule {

@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
+import { Faq } from "src/faq/faq.entity";
 import { Notice } from "src/notice/notice.entity";
 import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
@@ -103,4 +104,7 @@ export class User extends CommonEntity{
 
     @OneToMany(() => Notice, (notice) => notice.writer)
     notice: Notice
+
+    @OneToMany(() => Faq, (faq) => faq.writer)
+    faq: Notice
 }

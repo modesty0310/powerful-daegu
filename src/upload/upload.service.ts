@@ -58,7 +58,6 @@ export class UploadService {
                 r(url.split('?')[0]); //  return object url
             }),
         );
-
         return imageUrl;
     }
 

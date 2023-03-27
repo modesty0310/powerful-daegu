@@ -25,7 +25,6 @@ import { CurrentUserDto } from './dto/currentUser.dto';
 import { ReturnAuthCodeDto } from './dto/returnAuthCode.dto';
 import { SocialOauthDto } from './dto/socialOauth.dto';
 import { CodeCheckFail, CodeCheckSuccess } from './swagger/code-check';
-import { SocialFail } from './swagger/social';
 import { User } from './users.entity';
 import { UsersService } from './users.service';
 
