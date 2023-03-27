@@ -1,4 +1,4 @@
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
@@ -53,5 +53,22 @@ export class FaqRepository {
         }
 
         return result;
+    }
+
+    async deleteFaq(idArr: number[]) {
+        for(const id of idArr) {
+            if(typeof id !== 'number') throw new BadRequestException('공지사항의 아이디를 정확히 보내주세요.');
+            
+            const result = await this.faqRepository
+            .createQueryBuilder()
+            .update(Faq)
+            .set({deletedAt: new Date()})
+            .where('id = :id', {id})
+            .execute();
+
+            if( result.affected === 0 ) {
+                throw new BadRequestException('존재하지 않는 게시글 입니다.');
+            }
+        }
     }
 }

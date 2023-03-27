@@ -23,7 +23,7 @@ export class NoticeController {
         private readonly noticeService: NoticeService
     ) {}
 
-    @Get('all')
+    @Get()
     @ApiQuery({
         name: 'category',
         required: true,

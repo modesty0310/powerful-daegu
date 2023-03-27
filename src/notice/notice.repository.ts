@@ -51,7 +51,7 @@ export class NoticeRepository {
             const result = await this.noticeRepository
             .createQueryBuilder()
             .update(Notice)
-            .set({deletedAt: true})
+            .set({deletedAt: new Date()})
             .where('id = :id', {id})
             .execute();
 

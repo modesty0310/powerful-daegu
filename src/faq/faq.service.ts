@@ -21,4 +21,8 @@ export class FaqService {
     async getFaq(id: number) {
         return await this.faqRepository.getNotice(id);
     }
+
+    async deleteFaq(id: number[]) {
+        await this.faqRepository.deleteFaq(id);
+     }
 }

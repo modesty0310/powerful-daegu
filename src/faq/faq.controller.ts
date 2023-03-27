@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -36,5 +36,13 @@ export class FaqController {
         @Param('id') id: number
     ) {
         return await this.faqService.getFaq(id);
+    }
+
+    @Delete()
+    async deleteFaq(
+        @Body('id', new ParseArrayPipe({items: Number})) id: number[]
+    ) {
+        await this.faqService.deleteFaq(id);
+        return {message: 'FAQ를 삭제 하였습니다.'};
     }
 }
