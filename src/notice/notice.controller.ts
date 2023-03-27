@@ -35,7 +35,6 @@ export class NoticeController {
         description: '가져올 페이지 1부터 시작'
     })
     @ApiResponse({status: 200, description:"성공", type: ResponseAllNotice})
-    @UseGuards(JwtAuthGuard)
     async getAllNotice(
         @Query('category') category: Category,
         @Query('page', ParseIntPipe) page: number
@@ -52,7 +51,6 @@ export class NoticeController {
         description: '가져올 공지사항 아이디'
     })
     @ApiResponse({status: 200, description:"성공", type: ResponseNoticeDto})
-    @UseGuards(JwtAuthGuard)
     async getNotice (
         @Param('id', ParseIntPipe) id: number
     ) {

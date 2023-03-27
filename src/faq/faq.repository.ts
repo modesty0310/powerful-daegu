@@ -2,7 +2,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateFaqDto } from "./dto/createFaq.dto";
-import { Faq } from "./faq.entity";
+import { Faq, FaqCategory } from "./faq.entity";
 
 export class FaqRepository {
     constructor(
@@ -24,5 +24,18 @@ export class FaqRepository {
             category
         })
         .execute();
+    }
+
+    async getAllNotice(page: number, category: FaqCategory) {
+        const result = await this.faqRepository.findAndCount({
+            select: ['id', 'category', 'question', 'answer', 'createdAt', 'writer'],
+            relations: {writer: true},
+            where: category !== 'all' ? {category} : {},
+            order: {createdAt: 'DESC'},
+            skip: (page - 1) * 10,
+            take: 10,
+        })
+        
+        return result;
     }
 }
