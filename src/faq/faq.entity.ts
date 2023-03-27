@@ -30,16 +30,6 @@ export class Faq extends CommonEntity {
     writer: User
 
     @ApiProperty({
-        description: '자주묻는 질문 제목',
-        type: () => String,
-        example: "자주묻는 질문 입니다."
-    })
-    @Column()
-    @IsNotEmpty()
-    @IsString()
-    title: string
-
-    @ApiProperty({
         description: '질문 본문',
         type: () => String,
         example: "질문 입니다."

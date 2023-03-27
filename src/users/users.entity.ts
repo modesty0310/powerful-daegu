@@ -35,7 +35,6 @@ export class User extends CommonEntity{
     })
     @IsString()
     @Column()
-    @Exclude()
     password: string
 
     @ApiProperty({
