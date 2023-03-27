@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Like, Repository } from "typeorm";
@@ -35,7 +35,11 @@ export class NoticeRepository {
         .createQueryBuilder('notice')
         .leftJoinAndSelect('notice.writer', 'writer')
         .where("notice.id = :id", {id})
-        .getOne()
+        .getOne();
+
+        if(!result) {
+            throw new NotFoundException('공지사항을 찾을 수 없습니다.')
+        }
 
         return result;
     }
@@ -51,7 +55,6 @@ export class NoticeRepository {
             .where('id = :id', {id})
             .execute();
 
-            console.log(result);
             if( result.affected === 0 ) {
                 throw new BadRequestException('존재하지 않는 게시글 입니다.');
             }

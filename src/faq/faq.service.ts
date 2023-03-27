@@ -15,6 +15,10 @@ export class FaqService {
     }
 
     async getAllFaq(page: number, category: FaqCategory) {
-        return await this.faqRepository.getAllNotice(page, category);
+        return await this.faqRepository.getAllFaq(page, category);
+    }
+
+    async getFaq(id: number) {
+        return await this.faqRepository.getNotice(id);
     }
 }

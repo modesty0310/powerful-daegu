@@ -1,3 +1,4 @@
+import { NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
@@ -26,7 +27,7 @@ export class FaqRepository {
         .execute();
     }
 
-    async getAllNotice(page: number, category: FaqCategory) {
+    async getAllFaq(page: number, category: FaqCategory) {
         const result = await this.faqRepository.findAndCount({
             select: ['id', 'category', 'question', 'answer', 'createdAt', 'writer'],
             relations: {writer: true},
@@ -36,6 +37,21 @@ export class FaqRepository {
             take: 10,
         })
         
+        return result;
+    }
+
+
+    async getNotice(id: number) {
+        const result = await this.faqRepository
+        .createQueryBuilder('faq')
+        .leftJoinAndSelect('faq.writer', 'writer')
+        .where("faq.id = :id", {id})
+        .getOne();
+        
+        if(!result) {
+            throw new NotFoundException('FAQ를 찾을 수 없습니다.')
+        }
+
         return result;
     }
 }

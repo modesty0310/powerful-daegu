@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -29,5 +29,12 @@ export class FaqController {
         @Query('page', ParseIntPipe) page: number
     ) {
         return await this.faqService.getAllFaq(page, category);
+    }
+
+    @Get(':id')
+    async getFaq(
+        @Param('id') id: number
+    ) {
+        return await this.faqService.getFaq(id);
     }
 }
