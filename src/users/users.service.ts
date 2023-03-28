@@ -39,7 +39,7 @@ export class UsersService {
             return {text: '이미 존재 하는 이메일 입니다.', success: false, code: null};
         }else {
             const code = this.setRandomNum();
-            this.emailService.sendAuthCode(dto.email, code);
+            await this.emailService.sendAuthCode(dto.email, code);
             return {text: '작성한 이메일로 인증 코드를 보냈습니다.', success: true, code};
         }
     }

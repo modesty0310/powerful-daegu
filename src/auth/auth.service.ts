@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { CheckAuthCodeDto } from 'src/users/dto/checkAuthCode.dto';
 import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { GoogleLoginDto } from './dto/google-login.dto';
@@ -49,5 +50,16 @@ export class AuthService {
             email: email, sub: user.id, user_type: user.user_type
         }
         return {access_token: this.jwtService.sign(payload)}
+    }
+
+    async setEmailCheckToken(
+        dto: CheckAuthCodeDto
+    ) {
+        console.log(dto);
+        
+        const payload = {
+            email: dto.email, sub: dto.code
+        }
+        return {access_token: this.jwtService.sign(payload)};
     }
 }

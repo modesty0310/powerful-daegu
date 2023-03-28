@@ -3,8 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { AuthService } from './auth.service';
-import { NaverLoginGuard } from './guards/naver-login.guard';
-import { NaverSignupGuard } from './guards/naver-signup.guard';
+import { CodeCheckStrategy } from './strategies/code-check.strategy';
 import { GoogleLoginStrategy, GoogleSignupStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { KakaoLoginStrategy, KakaoSignupStrategy } from './strategies/kakao.strategy';
@@ -20,7 +19,7 @@ import { NaverLoginStrategy, NaverSignupStrategy } from './strategies/naver.stra
     }),
     forwardRef(() => UsersModule)
   ],
-  providers: [AuthService, JwtStrategy, GoogleSignupStrategy, GoogleLoginStrategy, NaverSignupStrategy, NaverLoginStrategy, KakaoSignupStrategy, KakaoLoginStrategy],
+  providers: [AuthService, JwtStrategy, GoogleSignupStrategy, GoogleLoginStrategy, NaverSignupStrategy, NaverLoginStrategy, KakaoSignupStrategy, KakaoLoginStrategy, CodeCheckStrategy],
   exports: [AuthService]
 })
 export class AuthModule {}

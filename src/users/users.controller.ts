@@ -5,6 +5,7 @@ import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
+import { CodeCheckGuard } from 'src/auth/guards/code-check.guard';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -67,11 +68,23 @@ export class UsersController {
     @ApiResponse({status: 200, description:"성공", type: CodeCheckSuccess})
     @ApiResponse({status: 401, description:"실패", type: CodeCheckFail})
     @Post('code-check')
-    async checkAuthCode(@Body() dto: CheckAuthCodeDto): Promise<CodeCheckSuccess> {
+    async checkAuthCode(
+        @Body() dto: CheckAuthCodeDto,
+        @Res() response: Response
+        ): Promise<CodeCheckSuccess> {           
         const {email, code} = dto;
         const getCode = await this.cacheManager.get(email);
+        console.log(getCode === code);
         
-        return {result: getCode === code}
+        // if(getCode === code) {
+        //     console.log(1111);
+            
+        //     const {access_token} = await this.authService.setEmailCheckToken(dto);
+        //     response.cookie('codeCheck_token', access_token, {httpOnly: true});
+        // }
+        console.log(code);
+        
+        return {result: getCode === code};
     }
 
     @ApiOperation({ summary: '구글 회원가입'})
@@ -132,10 +145,11 @@ export class UsersController {
         return {message: "로그인"}
     }
 
+    @Post()
+    @UseGuards(CodeCheckGuard)
     @ApiOperation({ summary: '회원가입'})
     @ApiResponse({status: 201, description:"성공", type: User})
     @ApiResponse({status: 401, description:"실패", type: FailResponseMessageDto})  
-    @Post()
     async createUser(@Body() dto: CreateUserDto):Promise<User> {
         return await this.usersService.createUser(dto);
     }
