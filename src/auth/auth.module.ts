@@ -14,7 +14,6 @@ import { NaverLoginStrategy, NaverSignupStrategy } from './strategies/naver.stra
     ConfigModule.forRoot(),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      secretOrPrivateKey: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1y' },
     }),
     forwardRef(() => UsersModule)

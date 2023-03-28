@@ -16,6 +16,6 @@ export class CodeCheckStrategy extends PassportStrategy(Strategy, 'code-check') 
     }
 
     async validate(payload) {    
-        return payload;
+        return payload.result;
     }
 }

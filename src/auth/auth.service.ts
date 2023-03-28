@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { CheckAuthCodeDto } from 'src/users/dto/checkAuthCode.dto';
 import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
-import { GoogleLoginDto } from './dto/google-login.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
@@ -53,13 +52,13 @@ export class AuthService {
     }
 
     async setEmailCheckToken(
-        dto: CheckAuthCodeDto
-    ) {
-        console.log(dto);
-        
+        result: boolean
+    ) { 
+        console.log(result);
+               
         const payload = {
-            email: dto.email, sub: dto.code
+            result
         }
-        return {access_token: this.jwtService.sign(payload)};
+        return {codeCheck_token: this.jwtService.sign(payload)};
     }
 }

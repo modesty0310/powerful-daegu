@@ -13,7 +13,9 @@ import { FaqModule } from './faq/faq.module';
 @Module({
   imports: [
     // env 설정
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     // typeORM 설정
     TypeOrmModule.forRoot({
       type: 'mysql',

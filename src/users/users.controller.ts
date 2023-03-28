@@ -15,7 +15,6 @@ import { NaverLoginGuard } from 'src/auth/guards/naver-login.guard';
 import { NaverSignupGuard } from 'src/auth/guards/naver-signup.guard';
 import { FailResponseMessageDto } from 'src/common/dto/failResponseMessage.dto';
 import { SuccessReponseMessageDto } from 'src/common/dto/successReponseMessage.dto';
-import { UploadService } from 'src/upload/upload.service';
 import { CurrentUser } from './decorators/user.decorator';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ChangeProfileDto } from './dto/changeProfile.dto';
@@ -36,7 +35,6 @@ export class UsersController {
         private readonly usersService: UsersService,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private readonly authService: AuthService,
-        private readonly uploadService: UploadService,
     ){}
 
     @ApiOperation({ summary: '홈페이지 로그인 API'})
@@ -70,20 +68,15 @@ export class UsersController {
     @Post('code-check')
     async checkAuthCode(
         @Body() dto: CheckAuthCodeDto,
-        @Res() response: Response
+        @Res({passthrough: true}) response: Response
         ): Promise<CodeCheckSuccess> {           
         const {email, code} = dto;
         const getCode = await this.cacheManager.get(email);
-        console.log(getCode === code);
         
-        // if(getCode === code) {
-        //     console.log(1111);
-            
-        //     const {access_token} = await this.authService.setEmailCheckToken(dto);
-        //     response.cookie('codeCheck_token', access_token, {httpOnly: true});
-        // }
-        console.log(code);
+        const {codeCheck_token} = await this.authService.setEmailCheckToken(getCode === code);
+        console.log(codeCheck_token);
         
+        response.cookie('codeCheck_token', codeCheck_token, {httpOnly: true});
         return {result: getCode === code};
     }
 
