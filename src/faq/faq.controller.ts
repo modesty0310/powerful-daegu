@@ -84,8 +84,6 @@ export class FaqController {
 
     @Patch()
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
-    @UseGuards(RolesGuard)
-    @UseGuards(JwtAuthGuard)
     async updateFaq(
         @Body() dto: UpdateFaqDto
     ) {

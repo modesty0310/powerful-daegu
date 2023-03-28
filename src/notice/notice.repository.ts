@@ -69,6 +69,7 @@ export class NoticeRepository {
         .update(Notice)
         .set({content, title, category})
         .where('id = :id', {id})
+        .andWhere('deletedAt IS NULL')
         .execute();
 
         if(result.affected === 0) throw new BadRequestException("공지사항이 존재 하지 않습니다.");
