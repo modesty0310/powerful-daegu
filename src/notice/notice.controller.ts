@@ -11,7 +11,6 @@ import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagg
 import { ResponseAllNotice } from './dto/responseAllNotice.dto';
 import { SuccessResponseInterceptor } from 'src/common/interceptors/success-response.interceptor';
 import { ResponseNoticeDto } from './dto/responseNotice.dto';
-import { ResponseCreateNoticeDto } from './dto/responseCreateNotice.dto';
 import { SuccessReponseMessageDto } from 'src/common/dto/successReponseMessage.dto';
 
 @ApiTags('notice')
