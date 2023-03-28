@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateFaqDto } from "./dto/createFaq.dto";
+import { UpdateFaqDto } from "./dto/updateFaq.dto";
 import { Faq, FaqCategory } from "./faq.entity";
 
 export class FaqRepository {
@@ -70,5 +71,20 @@ export class FaqRepository {
                 throw new BadRequestException('존재하지 않는 게시글 입니다.');
             }
         }
+    }
+
+    async updateFaq(dto: UpdateFaqDto) {
+        const {id, answer, question, category} = dto;
+
+        const result = await this.faqRepository
+        .createQueryBuilder()
+        .update(Faq)
+        .set({answer, question, category})
+        .where('id = :id', {id})
+        .execute();
+
+        if(result.affected === 0) throw new BadRequestException("공지사항이 존재 하지 않습니다.");
+        
+        return result;
     }
 }

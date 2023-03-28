@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateFaqDto } from './dto/createFaq.dto';
+import { UpdateFaqDto } from './dto/updateFaq.dto';
 import { FaqCategory } from './faq.entity';
 import { FaqRepository } from './faq.repository';
 
@@ -24,5 +25,9 @@ export class FaqService {
 
     async deleteFaq(id: number[]) {
         await this.faqRepository.deleteFaq(id);
-     }
+    }
+
+    async updateFaq(dto: UpdateFaqDto) {
+        await this.faqRepository.updateFaq(dto);
+    }
 }
