@@ -73,10 +73,8 @@ export class UsersController {
         const {email, code} = dto;
         const getCode = await this.cacheManager.get(email);
         
-        const {codeCheck_token} = await this.authService.setEmailCheckToken(getCode === code);
-        console.log(codeCheck_token);
+        await this.authService.setEmailCheckToken(getCode === code, response);
         
-        response.cookie('codeCheck_token', codeCheck_token, {httpOnly: true});
         return {result: getCode === code};
     }
 
@@ -86,9 +84,10 @@ export class UsersController {
     @UseGuards(GoogleSignupGuard)
     @Get('google/signup')
     async googleSignUp(
-        @CurrentUser() user: SocialOauthDto
+        @CurrentUser() user: SocialOauthDto,
+        @Res({passthrough: true}) response: Response
     ) {
-        return await this.usersService.socialSignUp(user);
+        return await this.authService.socialSignUp(user, response);
     }
     @ApiOperation({ summary: '구글 로그인'})
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
@@ -97,44 +96,43 @@ export class UsersController {
     @Get('google/login')
     async googleLogin(
         @CurrentUser() user: SocialOauthDto,
-        @Res() response: Response
+        @Res({passthrough: true}) response: Response
     ) {                
-        const {access_token} = await this.authService.socialLogIn(user.email);
-        response.cookie('access_token', access_token, {httpOnly: true});
+        await this.authService.socialLogIn(user.email, response);
         return {message: "로그인"}
     }
     @UseGuards(NaverSignupGuard)
     @Get('naver/signup')
     async naverSignUp(
-        @CurrentUser() user: SocialOauthDto
+        @CurrentUser() user: SocialOauthDto,
+        @Res({passthrough: true}) response: Response
     ) {
-        return await this.usersService.socialSignUp(user);
+        return await this.authService.socialSignUp(user, response);
     }
     @UseGuards(NaverLoginGuard)
     @Get('naver/login')
     async naverLogin(
         @CurrentUser() user: SocialOauthDto,
-        @Res() response: Response
+        @Res({passthrough: true}) response: Response
     ) {
-        const {access_token} = await this.authService.socialLogIn(user.email);
-        response.cookie('access_token', access_token, {httpOnly: true});
+        await this.authService.socialLogIn(user.email, response);
         return {message: "로그인"}
     }
     @UseGuards(KakaoSignupGuard)
     @Get('kakao/signup')
     async kakaoSignUp(
-        @CurrentUser() user: SocialOauthDto
+        @CurrentUser() user: SocialOauthDto,
+        @Res({passthrough: true}) response: Response
     ) {
-        return await this.usersService.socialSignUp(user);
+        return await this.authService.socialSignUp(user, response);
     }
     @UseGuards(KakaoLoginGuard)
     @Get('kakao/login')
     async kakaoLogin(
         @CurrentUser() user: SocialOauthDto,
-        @Res() response: Response
+        @Res({passthrough: true}) response: Response
     ) {
-        const {access_token} = await this.authService.socialLogIn(user.email);
-        response.cookie('access_token', access_token, {httpOnly: true});
+        await this.authService.socialLogIn(user.email, response);
         return {message: "로그인"}
     }
 

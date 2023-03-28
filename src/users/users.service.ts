@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 import { EmailService } from 'src/email/email.service';
 import { UploadService } from 'src/upload/upload.service';
 import { ChangePasswordDto } from './dto/changePassword.dto';
@@ -51,7 +52,7 @@ export class UsersService {
         return str;
     }
 
-    async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
+    async socialSignUp(user: SocialOauthDto, res: Response): Promise<SocialOauthDto> {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
 
         if(existEmail) {
