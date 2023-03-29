@@ -7,7 +7,6 @@ import { SocialOauthDto } from 'src/users/dto/socialOauth.dto';
 import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { LoginDto } from './dto/login.dto';
-import { time } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +16,7 @@ export class AuthService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
-    async jwtLogIn(dto: LoginDto) {
+    async jwtLogIn(dto: LoginDto, res: Response) {
         const {email, password} = dto;
 
         const user: User = await this.usersRepository.findUserByEmail(email);
@@ -38,7 +37,8 @@ export class AuthService {
         const payload = {
             email: email, sub: user.id, user_type: user.user_type
         }
-        return {access_token: this.jwtService.sign(payload)}
+        res.cookie('access_token',  this.jwtService.sign(payload), {httpOnly: true});
+        return 
     }
 
     async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
@@ -49,8 +49,6 @@ export class AuthService {
         }
         
         await this.cacheManager.set('checkCode_' + user.email, true, 1000 * 60 * 60 * 24);
-        
-
         return user
     }
 
@@ -60,6 +58,10 @@ export class AuthService {
         
         if(!user) {
             throw new UnauthorizedException('회원가입 되지 않은 계정입니다.');
+        }
+
+        if(user.user_type === origin) {
+            throw new UnauthorizedException('SNS 회원 가입 계정이 아닙니다.');
         }
 
         const payload = {

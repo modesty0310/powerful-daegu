@@ -44,8 +44,8 @@ export class UsersController {
         @Body() dto: LoginDto,
         @Res({passthrough: true}) response: Response
     ) {
-        const {access_token} = await this.authService.jwtLogIn(dto);
-        response.cookie('access_token', access_token, {httpOnly: true});
+        await this.authService.jwtLogIn(dto, response);
+        
         return {message: "로그인"}
     }
 
