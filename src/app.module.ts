@@ -51,7 +51,7 @@ import { QnaModule } from './qna/qna.module';
     UploadModule,
     FaqModule,
     QnaModule,
-  ]
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

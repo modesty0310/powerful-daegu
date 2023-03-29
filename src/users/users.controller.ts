@@ -1,11 +1,10 @@
-import { Body, CACHE_MANAGER, Controller, Get, Inject, ParseFilePipeBuilder, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, CACHE_MANAGER, Controller, Get, Inject, ParseFilePipeBuilder, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dto/login.dto';
-import { CodeCheckGuard } from 'src/auth/guards/code-check.guard';
 import { GoogleLoginGuard } from 'src/auth/guards/google-login.guard';
 import { GoogleSignupGuard } from 'src/auth/guards/google-signup.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -68,12 +67,14 @@ export class UsersController {
     @Post('code-check')
     async checkAuthCode(
         @Body() dto: CheckAuthCodeDto,
-        @Res({passthrough: true}) response: Response
         ): Promise<CodeCheckSuccess> {           
         const {email, code} = dto;
         const getCode = await this.cacheManager.get(email);
         
-        await this.authService.setEmailCheckToken(getCode === code, response);
+        if(getCode === code) {
+            await this.cacheManager.del(email);
+            await this.cacheManager.set('checkCode_' + email, true, 1000 * 60 * 60 * 24);
+        }
         
         return {result: getCode === code};
     }
@@ -85,9 +86,8 @@ export class UsersController {
     @Get('google/signup')
     async googleSignUp(
         @CurrentUser() user: SocialOauthDto,
-        @Res({passthrough: true}) response: Response
     ) {
-        return await this.authService.socialSignUp(user, response);
+        return await this.authService.socialSignUp(user);
     }
     @ApiOperation({ summary: '구글 로그인'})
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
@@ -105,9 +105,8 @@ export class UsersController {
     @Get('naver/signup')
     async naverSignUp(
         @CurrentUser() user: SocialOauthDto,
-        @Res({passthrough: true}) response: Response
     ) {
-        return await this.authService.socialSignUp(user, response);
+        return await this.authService.socialSignUp(user);
     }
     @UseGuards(NaverLoginGuard)
     @Get('naver/login')
@@ -122,9 +121,8 @@ export class UsersController {
     @Get('kakao/signup')
     async kakaoSignUp(
         @CurrentUser() user: SocialOauthDto,
-        @Res({passthrough: true}) response: Response
     ) {
-        return await this.authService.socialSignUp(user, response);
+        return await this.authService.socialSignUp(user);
     }
     @UseGuards(KakaoLoginGuard)
     @Get('kakao/login')
@@ -137,11 +135,17 @@ export class UsersController {
     }
 
     @Post()
-    @UseGuards(CodeCheckGuard)
     @ApiOperation({ summary: '회원가입'})
     @ApiResponse({status: 201, description:"성공", type: User})
     @ApiResponse({status: 401, description:"실패", type: FailResponseMessageDto})  
     async createUser(@Body() dto: CreateUserDto):Promise<User> {
+        const code = await this.cacheManager.get('checkCode_' + dto.email);
+        
+        if(!code && dto.user_type === 'origin') {
+            throw new BadRequestException('인증 코드가 올바르지 않습니다.');
+        }else if(!code && dto.user_type !== 'origin') {
+            throw new BadRequestException('올바르지 않은 이메일 입니다.');
+        }
         return await this.usersService.createUser(dto);
     }
 
@@ -194,6 +198,8 @@ export class UsersController {
     async getUser(
         @CurrentUser() user: CurrentUserDto
     ): Promise<User> {
+        console.log(user);
+        
         return await this.usersService.getUser(user);  
     }
 }

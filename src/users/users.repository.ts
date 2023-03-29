@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ChangePasswordDto } from "./dto/changePassword.dto";
@@ -62,7 +62,10 @@ export class UsersRepository {
         ])
         .where("user.id = :id", { id })
         .getOne();
-
+        
+        if(!result) {
+            throw new NotFoundException('로그인을 해주세요.');
+        }
         return result;
     }
 }

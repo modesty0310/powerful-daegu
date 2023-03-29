@@ -1,18 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
-import { CheckAuthCodeDto } from 'src/users/dto/checkAuthCode.dto';
+import { Cache } from 'cache-manager';
 import { SocialOauthDto } from 'src/users/dto/socialOauth.dto';
 import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { LoginDto } from './dto/login.dto';
+import { time } from 'console';
 
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
-        private readonly usersRepository: UsersRepository
+        private readonly usersRepository: UsersRepository,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
     async jwtLogIn(dto: LoginDto) {
@@ -39,16 +41,16 @@ export class AuthService {
         return {access_token: this.jwtService.sign(payload)}
     }
 
-    async socialSignUp(user: SocialOauthDto, res: Response): Promise<SocialOauthDto> {
+    async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
         const existEmail = await this.usersRepository.existsByEmail(user.email);
 
         if(existEmail) {
             throw new UnauthorizedException("이미 존재하는 이메일 입니다.")
         }
-        const payload = {
-            result: true
-        }
-        res.cookie('codeCheck_token', this.jwtService.sign(payload), {httpOnly: true});
+        
+        await this.cacheManager.set('checkCode_' + user.email, true, 1000 * 60 * 60 * 24);
+        
+
         return user
     }
 
@@ -65,16 +67,5 @@ export class AuthService {
         }
         res.cookie('access_token', this.jwtService.sign(payload), {httpOnly: true});
         return;
-    }
-
-    async setEmailCheckToken(
-        result: boolean,
-        res: Response
-    ) {             
-        const payload = {
-            result
-        }
-        res.cookie('codeCheck_token', this.jwtService.sign(payload), {httpOnly: true});
-        return 
     }
 }
