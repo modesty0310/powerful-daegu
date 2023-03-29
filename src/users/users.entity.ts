@@ -4,6 +4,7 @@ import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validato
 import { CommonEntity } from "src/common/entities/common.entity";
 import { Faq } from "src/faq/faq.entity";
 import { Notice } from "src/notice/notice.entity";
+import { Qna } from "src/qna/qna.entity";
 import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 enum UserType {
@@ -35,6 +36,7 @@ export class User extends CommonEntity{
     })
     @IsString()
     @Column()
+    @Exclude({ toPlainOnly: true })
     password: string
 
     @ApiProperty({
@@ -55,6 +57,7 @@ export class User extends CommonEntity{
     @IsBoolean()
     @IsNotEmpty()
     @Column()
+    @Exclude({ toPlainOnly: true })
     term: boolean
 
     @ApiProperty({
@@ -77,11 +80,13 @@ export class User extends CommonEntity{
         type: "enum",
         enum: UserType,
     })
+    @Exclude({ toPlainOnly: true })
     user_type: UserType
 
     @ApiProperty({
         description: '유저 프로필 사진',
-        enum: String
+        example: 'https://powerful-daegu.s3.ap-northeast-2.amazonaws.com/users/1679381648358_nest.png',
+        type: String
     })
     @IsString()
     @Column({nullable: true})
@@ -105,5 +110,11 @@ export class User extends CommonEntity{
     notice: Notice
 
     @OneToMany(() => Faq, (faq) => faq.writer)
-    faq: Notice
+    faq: Faq
+
+    @OneToMany(() => Qna, (qna) => qna.writer)
+    qna_writer: Qna
+
+    @OneToMany(() => Qna, (qna) => qna.answerer)
+    qna_answerer: Qna
 }

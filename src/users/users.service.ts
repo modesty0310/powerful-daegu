@@ -23,14 +23,14 @@ export class UsersService {
 
     async createUser(dto: CreateUserDto): Promise<User> {
         const {email, nickname, password, term, user_type} = dto;
-        const existEmail = await this.usersRepository.existsByEmail(dto.email);
-        
-        if (existEmail) {
+        const existEmail = await this.usersRepository.existsByEmail(dto.email); // 이메일이 이미 존재하는지 확인
+
+        if (existEmail) { // 이미 존재하는 경우 예외 처리
             throw new UnauthorizedException('해당하는 이메일은 이미 존재합니다.');
         }
-        const hasedPassword = await bcrypt.hash(password, 10);
+        const hasedPassword = await bcrypt.hash(password, 10); // 비밀번호 암호화
 
-        return await this.usersRepository.createUser({email, nickname, password: hasedPassword, term, user_type});
+        return await this.usersRepository.createUser({email, nickname, password: hasedPassword, term, user_type}); // 새로운 유저 생성
     }
 
     async createAuthCode(dto: CreateAuthCodeDto): Promise<ReturnAuthCodeDto> {        
@@ -58,7 +58,7 @@ export class UsersService {
         if(existEmail) {
             throw new UnauthorizedException("이미 존재하는 이메일 입니다.")
         }
-
+        
         return user
     }
 
