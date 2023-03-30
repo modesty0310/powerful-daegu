@@ -2,10 +2,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Qna } from "./qna.entity";
+import { Question } from "./question.entity";
 
 @Entity()
-export class QnaFile extends CommonEntity {
+export class QuestionFile extends CommonEntity {
     @ApiProperty({
         description: '파일 아이디',
         type: BigInt,
@@ -15,14 +15,14 @@ export class QnaFile extends CommonEntity {
     id: BigInt
 
     @ApiProperty({
-        type: Qna
+        type: Question
     })
     @IsNotEmpty()
-    @ManyToOne(() => Qna, (qna) => qna.file, {nullable: true})
+    @ManyToOne(() => Question, (question) => question.file, {nullable: true})
     @JoinColumn([
-        { name: "qna", referencedColumnName: "id" },
+        { name: "question", referencedColumnName: "id" },
     ])
-    qna: Qna
+    question: Question
 
     @ApiProperty({
         description: '파일 경로',
@@ -32,4 +32,6 @@ export class QnaFile extends CommonEntity {
     @IsString()
     @Column()
     url: string
+
+    
 }

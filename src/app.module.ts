@@ -9,7 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
 import { NoticeModule } from './notice/notice.module';
 import { FaqModule } from './faq/faq.module';
-import { QnaModule } from './qna/qna.module';
+import { QuestionModule } from './question/question.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { QnaModule } from './qna/qna.module';
     AuthModule,
     UploadModule,
     FaqModule,
-    QnaModule,
+    QuestionModule,
+    AnswerModule,
   ],
 })
 export class AppModule implements NestModule {

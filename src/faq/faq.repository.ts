@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
@@ -6,6 +6,7 @@ import { CreateFaqDto } from "./dto/createFaq.dto";
 import { UpdateFaqDto } from "./dto/updateFaq.dto";
 import { Faq, FaqCategory } from "./faq.entity";
 
+@Injectable()
 export class FaqRepository {
     constructor(
         @InjectRepository(Faq)

@@ -1,12 +1,11 @@
-import { Body, Controller, Get, Param, ParseFilePipeBuilder, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseFilePipeBuilder, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
-import { AnswerQnaDto } from './dto/answerQna.dto';
-import { CreateQnaDto } from './dto/createQna.dto';
-import { QnaCategory } from './qna.entity';
-import { QnaService } from './qna.service';
+import { CreateQuestionDto } from './dto/createQuestion.dto';
+import { QnaCategory } from './question.entity';
+import { QnaService } from './question.service';
 
 @Controller('qna')
 export class QnaController {
@@ -18,7 +17,7 @@ export class QnaController {
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('files'))
     async createQna (
-        @Body() dto: CreateQnaDto,
+        @Body() dto: CreateQuestionDto,
         @CurrentUser() user: CurrentUserDto,
         @UploadedFiles(
             new ParseFilePipeBuilder()
@@ -42,15 +41,5 @@ export class QnaController {
         @Param('id') id: number
     ) {
         return await this.qnaService.getQna(id);
-    }
-
-    @Post('answer')
-    @UseGuards(JwtAuthGuard)
-    async answerQna(
-        @Body() dto: AnswerQnaDto,
-        @CurrentUser() user: CurrentUserDto
-    ) {
-        await this.qnaService.answerQna(dto, user);
-        return {message: '답변을 완료 했습니다.'};
     }
 }
