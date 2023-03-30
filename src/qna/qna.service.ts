@@ -32,4 +32,8 @@ export class QnaService {
     async getAllQna(page: number, category: QnaCategory) {
         return await this.qnaRepository.getAllQna(category, page);
     }
+
+    async getQna(id: number) {
+        return await this.qnaRepository.getQna(id);
+    }
 }

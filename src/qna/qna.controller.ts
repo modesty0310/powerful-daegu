@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseFilePipeBuilder, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseFilePipeBuilder, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
@@ -21,7 +21,6 @@ export class QnaController {
         @CurrentUser() user: CurrentUserDto,
         @UploadedFiles(
             new ParseFilePipeBuilder()
-            .addFileTypeValidator({fileType:  /(png|jpg|jpeg)$/})
             .build({fileIsRequired: false}),
         ) files?: Express.Multer.File[],     
     ) {
@@ -35,5 +34,12 @@ export class QnaController {
         @Query('page') page: number 
     ) {
         return await this.qnaService.getAllQna(page, category);
+    }
+
+    @Get(':id')
+    async getQna(
+        @Param('id') id: number
+    ) {
+        return await this.qnaService.getQna(id);
     }
 }

@@ -56,4 +56,15 @@ export class QnaRepository {
 
         return result;
     }
+
+    async getQna(id: number) {
+        const result = await this.qnaRepository.createQueryBuilder('qna')
+        .leftJoinAndSelect('qna.writer', 'writer')
+        .leftJoinAndSelect('qna.answerer', 'answerer')
+        .leftJoinAndSelect('qna.file', 'file')
+        .where("qna.id = :id", {id})
+        .getOne();
+
+        return result
+    }
 }
