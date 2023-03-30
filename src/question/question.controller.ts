@@ -16,7 +16,7 @@ export class QnaController {
     @Post()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('files'))
-    async createQna (
+    async createQuestion (
         @Body() dto: CreateQuestionDto,
         @CurrentUser() user: CurrentUserDto,
         @UploadedFiles(
@@ -24,22 +24,22 @@ export class QnaController {
             .build({fileIsRequired: false}),
         ) files?: Express.Multer.File[],     
     ) {
-        await this.qnaService.createQna(dto, user, files);
+        await this.qnaService.createQuestion(dto, user, files);
         return {message: '1:1 문의 등록이 완료 되었습니다.'}
     }
 
     @Get()
-    async getAllQna(
+    async getAllQuestion(
         @Query('category') category: QnaCategory,
         @Query('page') page: number 
     ) {
-        return await this.qnaService.getAllQna(page, category);
+        return await this.qnaService.getAllQuestion(page, category);
     }
 
     @Get(':id')
-    async getQna(
+    async getQuestion(
         @Param('id') id: number
     ) {
-        return await this.qnaService.getQna(id);
+        return await this.qnaService.getQuestion(id);
     }
 }

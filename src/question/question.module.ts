@@ -11,6 +11,7 @@ import { QuestionRepository } from './question.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([Question, QuestionFile]), AuthModule, UploadModule],
   providers: [QnaService, QuestionRepository],
-  controllers: [QnaController]
+  controllers: [QnaController],
+  exports: [QuestionRepository]
 })
 export class QuestionModule {}

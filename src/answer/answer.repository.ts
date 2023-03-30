@@ -4,6 +4,7 @@ import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { Answer } from "./answer.entity";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
+import { UpdateAnswerDto } from "./dto/updateAnswer.dto";
 
 @Injectable()
 export class AnswerRepository {
@@ -12,8 +13,8 @@ export class AnswerRepository {
         private readonly answerRepository: Repository<Answer>
     ){}
 
-    async answerQna(dto: CreateAnswerDto, user: CurrentUserDto) {
-        const result = await this.answerRepository.createQueryBuilder()
+    async createAnswer(dto: CreateAnswerDto, user: CurrentUserDto) {
+        await this.answerRepository.createQueryBuilder()
         .insert()
         .into(Answer)
         .values({
@@ -22,18 +23,28 @@ export class AnswerRepository {
                 id: user.sub
             },
             question: {
-                id: dto.id
+                id: dto.questionId
             }
         })
         .execute();
-
-        return;
     }
 
     async deleteAnser(id: number) {
         const result = await this.answerRepository.createQueryBuilder()
         .delete()
         .where('id = :id', {id})
+        .execute();
+
+        return result;
+    }
+
+    async updateAnswer(dto: UpdateAnswerDto) {
+        const result = await this.answerRepository.createQueryBuilder()
+        .update(Answer)
+        .set({
+            answer: dto.answer
+        })
+        .where('id = :id', {id: dto.id})
         .execute();
 
         return result;

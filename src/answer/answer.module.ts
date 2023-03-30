@@ -4,9 +4,10 @@ import { AnswerController } from './answer.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Answer } from './answer.entity';
 import { AnswerRepository } from './answer.repository';
+import { QuestionModule } from 'src/question/question.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Answer])],
+  imports: [TypeOrmModule.forFeature([Answer]), QuestionModule],
   providers: [AnswerService, AnswerRepository],
   controllers: [AnswerController]
 })

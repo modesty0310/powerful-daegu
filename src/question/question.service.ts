@@ -12,8 +12,8 @@ export class QnaService {
         private readonly uploadService: UploadService
     ) {}
 
-    async createQna(dto: CreateQuestionDto, user: CurrentUserDto, files?: Express.Multer.File[]) {
-        const qna = await this.qnaRepository.createQna(dto, user);
+    async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto, files?: Express.Multer.File[]) {
+        const qna = await this.qnaRepository.createQuestion(dto, user);
         const qnaId = qna.identifiers[0].id;
         
         if(files) {
@@ -27,12 +27,12 @@ export class QnaService {
         }
     }
 
-    async getAllQna(page: number, category: QnaCategory) {
-        return await this.qnaRepository.getAllQna(category, page);
+    async getAllQuestion(page: number, category: QnaCategory) {
+        return await this.qnaRepository.getAllQuestion(category, page);
     }
 
-    async getQna(id: number) {
-        const result = await this.qnaRepository.getQna(id);
+    async getQuestion(id: number) {
+        const result = await this.qnaRepository.getQuestion(id);
         if(!result) throw new NotFoundException('질문이 존재 하지 않습니다');
 
         return result

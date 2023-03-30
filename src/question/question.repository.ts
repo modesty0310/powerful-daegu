@@ -15,7 +15,7 @@ export class QuestionRepository {
         private readonly qnaFileRepository: Repository<QuestionFile>
     ){}
 
-    async createQna(dto: CreateQuestionDto, user: CurrentUserDto) {
+    async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto) {
         const {category, question} = dto;
         const result = await this.qnaRepository.createQueryBuilder()
         .insert()
@@ -46,7 +46,7 @@ export class QuestionRepository {
         }))
     }
 
-    async getAllQna(category: QnaCategory, page: number) {
+    async getAllQuestion(category: QnaCategory, page: number) {
         const result = await this.qnaRepository.findAndCount({
             select: ['id', 'category', 'question', 'answer', 'createdAt'],
             relations: {questioner: true, answer: true},
@@ -59,7 +59,7 @@ export class QuestionRepository {
         return result;
     }
 
-    async getQna(id: number) {
+    async getQuestion(id: number) {
         const result = await this.qnaRepository.createQueryBuilder('question')
         .leftJoinAndSelect('question.questioner', 'questioner')
         .leftJoinAndSelect('question.answer', 'answer')
