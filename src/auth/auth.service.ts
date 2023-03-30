@@ -60,7 +60,7 @@ export class AuthService {
             throw new UnauthorizedException('회원가입 되지 않은 계정입니다.');
         }
 
-        if(user.user_type === origin) {
+        if(user.user_type === 'origin') {
             throw new UnauthorizedException('SNS 회원 가입 계정이 아닙니다.');
         }
 

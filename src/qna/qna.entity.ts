@@ -53,7 +53,7 @@ export class Qna extends CommonEntity {
         type: String
     })
     @IsString()
-    @Column('text')
+    @Column('text', {nullable: true})
     answer: string
 
     @ApiProperty({
