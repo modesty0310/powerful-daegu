@@ -21,7 +21,6 @@ export class RolesGuard implements CanActivate {
 
     if(user.role === 'admin') {
         return true;
-
     }
     throw new UnauthorizedException('권한이 없습니다');
   }

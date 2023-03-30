@@ -3,6 +3,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
+import { AnswerQnaDto } from './dto/answerQna.dto';
 import { CreateQnaDto } from './dto/createQna.dto';
 import { QnaCategory } from './qna.entity';
 import { QnaService } from './qna.service';
@@ -41,5 +42,15 @@ export class QnaController {
         @Param('id') id: number
     ) {
         return await this.qnaService.getQna(id);
+    }
+
+    @Post('answer')
+    @UseGuards(JwtAuthGuard)
+    async answerQna(
+        @Body() dto: AnswerQnaDto,
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        await this.qnaService.answerQna(dto, user);
+        return {message: '답변을 완료 했습니다.'};
     }
 }

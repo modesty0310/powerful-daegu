@@ -1,6 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
+import { AnswerQnaDto } from "./dto/answerQna.dto";
 import { CreateQnaDto } from "./dto/createQna.dto";
 import { QnaFile } from "./qna-file.entity";
 import { Qna, QnaCategory } from "./qna.entity";
@@ -66,5 +67,20 @@ export class QnaRepository {
         .getOne();
 
         return result
+    }
+
+    async answerQna(dto: AnswerQnaDto, user: CurrentUserDto) {
+        const result = await this.qnaRepository.createQueryBuilder()
+        .update(Qna)
+        .set({
+            answer: dto.answer,
+            answerer: {
+                id: user.sub
+            }
+        })
+        .where('id = :id', {id: dto.id})
+        .execute();
+
+        return result;
     }
 }

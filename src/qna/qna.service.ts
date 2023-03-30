@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UploadService } from 'src/upload/upload.service';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
+import { AnswerQnaDto } from './dto/answerQna.dto';
 import { CreateQnaDto } from './dto/createQna.dto';
 import { QnaCategory } from './qna.entity';
 import { QnaRepository } from './qna.repository';
@@ -13,8 +14,6 @@ export class QnaService {
     ) {}
 
     async createQna(dto: CreateQnaDto, user: CurrentUserDto, files?: Express.Multer.File[]) {
-        console.log(files);
-
         const qna = await this.qnaRepository.createQna(dto, user);
         const qnaId = qna.identifiers[0].id;
         
@@ -34,6 +33,15 @@ export class QnaService {
     }
 
     async getQna(id: number) {
-        return await this.qnaRepository.getQna(id);
+        const result = await this.qnaRepository.getQna(id);
+        if(!result) throw new NotFoundException('질문이 없습니다.');
+        return result
+    }
+
+    async answerQna(dto: AnswerQnaDto, user: CurrentUserDto) {
+        const result = await this.qnaRepository.answerQna(dto, user);
+        if(result.affected === 0) {
+            throw new NotFoundException("답변할 질문이 없습니다.")
+        }
     }
 }
