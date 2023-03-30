@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UploadService } from 'src/upload/upload.service';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateQnaDto } from './dto/createQna.dto';
+import { QnaCategory } from './qna.entity';
 import { QnaRepository } from './qna.repository';
 
 @Injectable()
@@ -26,5 +27,9 @@ export class QnaService {
 
             await this.qnaRepository.saveFile(qnaId, urlArr);
         }
+    }
+
+    async getAllQna(page: number, category: QnaCategory) {
+        return await this.qnaRepository.getAllQna(category, page);
     }
 }

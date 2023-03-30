@@ -3,7 +3,7 @@ import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateQnaDto } from "./dto/createQna.dto";
 import { QnaFile } from "./qna-file.entity";
-import { Qna } from "./qna.entity";
+import { Qna, QnaCategory } from "./qna.entity";
 
 export class QnaRepository {
     constructor(
@@ -42,5 +42,18 @@ export class QnaRepository {
             })
             .execute();
         }))
+    }
+
+    async getAllQna(category: QnaCategory, page: number) {
+        const result = await this.qnaRepository.findAndCount({
+            select: ['id', 'category', 'question', 'answer', 'createdAt', 'writer'],
+            relations: {writer: true},
+            where: category !== 'all' ? {category} : {},
+            order: {createdAt: 'DESC'},
+            skip: (page - 1) * 10,
+            take: 10,
+        });
+
+        return result;
     }
 }
