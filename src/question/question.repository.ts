@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateQuestionDto } from "./dto/createQuestion.dto";
+import { UpdateQuestionDto } from "./dto/updateQuestion.dto";
 import { QuestionFile } from "./question-file.entity";
 import { Question, QnaCategory } from "./question.entity";
 
@@ -10,14 +11,14 @@ import { Question, QnaCategory } from "./question.entity";
 export class QuestionRepository {
     constructor(
         @InjectRepository(Question)
-        private readonly qnaRepository: Repository<Question>,
+        private readonly questionRepository: Repository<Question>,
         @InjectRepository(QuestionFile)
-        private readonly qnaFileRepository: Repository<QuestionFile>
+        private readonly questionFileRepository: Repository<QuestionFile>
     ){}
 
     async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto) {
         const {category, question} = dto;
-        const result = await this.qnaRepository.createQueryBuilder()
+        const result = await this.questionRepository.createQueryBuilder()
         .insert()
         .into(Question)
         .values({
@@ -33,7 +34,7 @@ export class QuestionRepository {
 
     async saveFile(qnaId: number, urls: string[]) {
         await Promise.all(urls.map(async url => {
-            await this.qnaFileRepository.createQueryBuilder()
+            await this.questionFileRepository.createQueryBuilder()
             .insert()
             .into(QuestionFile)
             .values({
@@ -47,7 +48,7 @@ export class QuestionRepository {
     }
 
     async getAllQuestion(category: QnaCategory, page: number) {
-        const result = await this.qnaRepository.findAndCount({
+        const result = await this.questionRepository.findAndCount({
             select: ['id', 'category', 'question', 'answer', 'createdAt'],
             relations: {questioner: true, answer: true},
             where: category !== 'all' ? {category} : {},
@@ -60,7 +61,7 @@ export class QuestionRepository {
     }
 
     async getQuestion(id: number) {
-        const result = await this.qnaRepository.createQueryBuilder('question')
+        const result = await this.questionRepository.createQueryBuilder('question')
         .leftJoinAndSelect('question.questioner', 'questioner')
         .leftJoinAndSelect('question.answer', 'answer')
         .leftJoinAndSelect('question.file', 'file')
@@ -70,5 +71,15 @@ export class QuestionRepository {
         return result
     }
 
+    async updateQuestion(dto: UpdateQuestionDto, user:CurrentUserDto) {
+        const result = await this.questionRepository.createQueryBuilder()
+        .update(Question)
+        .set({
+            question: dto.question
+        })
+        .where('id = :id', {id: dto.id})
+        .execute();
 
+        return result
+    }
 }
