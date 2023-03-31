@@ -53,9 +53,9 @@ export class Question extends CommonEntity {
     @IsEnum(QnaCategory)
     category: QnaCategory
 
-    @OneToMany(() => QuestionFile, (file) => file.question)
+    @OneToMany(() => QuestionFile, (file) => file.question, {nullable: true, cascade:true})
     file: QuestionFile
 
-    @OneToOne(() => Answer, (answer) => answer.question, {nullable: true})
+    @OneToOne(() => Answer, (answer) => answer.question, {nullable: true, cascade:true})
     answer: Answer
 }

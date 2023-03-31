@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
-import { Repository } from "typeorm";
+import { Connection, Repository } from "typeorm";
 import { CreateQuestionDto } from "./dto/createQuestion.dto";
 import { UpdateQuestionDto } from "./dto/updateQuestion.dto";
 import { QuestionFile } from "./question-file.entity";
@@ -13,7 +13,8 @@ export class QuestionRepository {
         @InjectRepository(Question)
         private readonly questionRepository: Repository<Question>,
         @InjectRepository(QuestionFile)
-        private readonly questionFileRepository: Repository<QuestionFile>
+        private readonly questionFileRepository: Repository<QuestionFile>,
+        private readonly connection: Connection
     ){}
 
     async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto) {
@@ -83,13 +84,35 @@ export class QuestionRepository {
         return result
     }
 
-    async deleteQuestion(id: BigInt) {
-        const result = await this.questionRepository.createQueryBuilder()
-        .delete()
-        .from(Question)
-        .where('id = :id', {id})
+    async deleteQuestion(idArr: BigInt[]) {
+        const queryRunner = this.connection.createQueryRunner();
+        await queryRunner.connect(); // 2
+        await queryRunner.startTransaction(); // 3
+        try {
+            await Promise.all(idArr.map(async id => {        
+                const result = await queryRunner.manager.delete(Question, {id});
+                if( result.affected === 0 ) {
+                    throw new BadRequestException('존재하지 않는 게시글 입니다.');
+                };
+            }))
+        } catch (error) {            
+            await queryRunner.rollbackTransaction();
+            await queryRunner.release();
+            throw new BadRequestException('존재하지 않는 게시글 입니다.');
+        }
+        await queryRunner.commitTransaction();
+        await queryRunner.release();
+
+        return;
+    }
+
+    async getMyQuestion(user: CurrentUserDto) {
+        const result = await this.questionRepository.createQueryBuilder('question')
+        .leftJoinAndSelect('question.questioner', 'questioner')
+        .leftJoinAndSelect('question.answer', 'answer')
+        .where('question.questioner = :id', {id: user.sub})
         .execute()
 
-        return result
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseFilePipeBuilder, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
@@ -8,7 +8,7 @@ import { UpdateQuestionDto } from './dto/updateQuestion.dto';
 import { QnaCategory } from './question.entity';
 import { QuestionService } from './question.service';
 
-@Controller('qna')
+@Controller('question')
 export class QuestionController {
     constructor(
         private readonly questionService: QuestionService
@@ -38,9 +38,17 @@ export class QuestionController {
         return await this.questionService.getAllQuestion(page, category);
     }
 
+    @Get('my')
+    @UseGuards(JwtAuthGuard)
+    async getMyQuestion(
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        return await this.questionService.getMyQuestion(user);
+    }
+
     @Get(':id')
     async getQuestion(
-        @Param('id') id: BigInt
+        @Param('id', ParseIntPipe) id: BigInt
     ) {
         return await this.questionService.getQuestion(id);
     }
@@ -55,4 +63,13 @@ export class QuestionController {
 
         return {message: '질문을 수정 하였습니다.'};
     }
+
+    @Delete()
+    async deleteQuestion(
+        @Body('id', new ParseArrayPipe({items: Number})) id: BigInt[]
+    ) {
+        await this.questionService.deleteQuestion(id);
+        return {message: '질문을 삭제 하였습니다.'}
+    }
+
 }

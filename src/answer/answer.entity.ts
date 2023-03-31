@@ -31,7 +31,7 @@ export class Answer extends CommonEntity {
     @Column('text', {nullable: true})
     answer: string
 
-    @OneToOne(() => Question, (question) => question.answer)
+    @OneToOne(() => Question, (question) => question.answer, {onDelete: 'CASCADE'})
     @JoinColumn()
     question: Question
 }

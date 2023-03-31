@@ -18,7 +18,7 @@ export class QuestionFile extends CommonEntity {
         type: Question
     })
     @IsNotEmpty()
-    @ManyToOne(() => Question, (question) => question.file, {nullable: true})
+    @ManyToOne(() => Question, (question) => question.file, {onDelete: 'CASCADE'})
     @JoinColumn([
         { name: "question", referencedColumnName: "id" },
     ])

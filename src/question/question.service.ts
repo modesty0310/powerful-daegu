@@ -51,9 +51,11 @@ export class QuestionService {
         if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
     }
 
-    async deleteQuestion (id: BigInt) {
-        const result = await this.questionRepository.deleteQuestion(id);
+    async deleteQuestion (idArr: BigInt[]) {
+        await this.questionRepository.deleteQuestion(idArr);
+    }
 
-        if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
+    async getMyQuestion(user: CurrentUserDto) {
+        return await this.questionRepository.getMyQuestion(user);
     }
 }
