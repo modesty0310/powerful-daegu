@@ -9,7 +9,7 @@ import { QnaCategory } from './question.entity';
 import { QuestionService } from './question.service';
 
 @Controller('qna')
-export class QnaController {
+export class QuestionController {
     constructor(
         private readonly questionService: QuestionService
     ){}
@@ -40,7 +40,7 @@ export class QnaController {
 
     @Get(':id')
     async getQuestion(
-        @Param('id') id: number
+        @Param('id') id: BigInt
     ) {
         return await this.questionService.getQuestion(id);
     }

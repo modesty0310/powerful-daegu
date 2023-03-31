@@ -4,8 +4,8 @@ import { Answer } from "src/answer/answer.entity";
 
 export class CreateAnswerDto extends PickType(Answer, ['answer']) {
     @ApiProperty({
-        
+
     })
     @IsNotEmpty()
-    questionId: number
+    questionId: BigInt
 }

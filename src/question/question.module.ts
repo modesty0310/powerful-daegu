@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { QnaService } from './question.service';
-import { QnaController } from './question.controller';
+import { QuestionService } from './question.service';
+import { QuestionController } from './question.controller';
 import { Question } from './question.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionFile } from './question-file.entity';
@@ -10,8 +10,8 @@ import { QuestionRepository } from './question.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Question, QuestionFile]), AuthModule, UploadModule],
-  providers: [QnaService, QuestionRepository],
-  controllers: [QnaController],
+  providers: [QuestionService, QuestionRepository],
+  controllers: [QuestionController],
   exports: [QuestionRepository]
 })
 export class QuestionModule {}

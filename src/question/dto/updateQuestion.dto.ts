@@ -4,5 +4,5 @@ import { Question } from "../question.entity";
 
 export class UpdateQuestionDto extends PickType(Question, ['id', 'question']) {
     @IsNotEmpty()
-    id: number;
+    id: BigInt;
 }

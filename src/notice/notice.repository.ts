@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
-import { Like, Repository } from "typeorm";
+import { Connection, Like, Repository } from "typeorm";
 import { CreateNoticeDto } from "./dto/createNotice.dto";
 import { UpdateNoticeDto } from "./dto/updateNotice.dto";
 import { Category, Notice } from "./notice.entity";
@@ -10,7 +10,8 @@ import { Category, Notice } from "./notice.entity";
 export class NoticeRepository {
     constructor(
         @InjectRepository(Notice)
-        private readonly noticeRepository: Repository<Notice>
+        private readonly noticeRepository: Repository<Notice>,
+        private readonly connection: Connection
     ) {}
 
     async createNotice(dto: CreateNoticeDto, user: CurrentUserDto) {
@@ -45,20 +46,24 @@ export class NoticeRepository {
     }
 
     async deleteNotice(idArr: number[]) {
-        for(const id of idArr) {
-            if(typeof id !== 'number') throw new BadRequestException('공지사항의 아이디를 정확히 보내주세요.');
-            
-            const result = await this.noticeRepository
-            .createQueryBuilder()
-            .update(Notice)
-            .set({deletedAt: new Date()})
-            .where('id = :id', {id})
-            .execute();
-
-            if( result.affected === 0 ) {
-                throw new BadRequestException('존재하지 않는 게시글 입니다.');
-            }
+        const queryRunner = this.connection.createQueryRunner();
+        await queryRunner.connect(); // 2
+        await queryRunner.startTransaction(); // 3
+        try {
+            await Promise.all(idArr.map(async id => {        
+                const result = await queryRunner.manager.delete(Notice, {id});
+    
+                if( result.affected === 0 ) {
+                    throw new BadRequestException('존재하지 않는 게시글 입니다.');
+                };
+            }))
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            await queryRunner.release();
+            throw new BadRequestException('존재하지 않는 게시글 입니다.');
         }
+        await queryRunner.commitTransaction();
+        await queryRunner.release();
     }
 
     async updateNotice(dto: UpdateNoticeDto) {

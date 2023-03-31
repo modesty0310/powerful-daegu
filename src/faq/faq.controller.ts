@@ -76,7 +76,7 @@ export class FaqController {
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     async deleteFaq(
-        @Body('id', new ParseArrayPipe({items: Number})) id: number[]
+        @Body('id', new ParseArrayPipe({items: Number})) id: BigInt[]
     ) {
         await this.faqService.deleteFaq(id);
         return {message: 'FAQ를 삭제 하였습니다.'};

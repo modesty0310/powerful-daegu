@@ -23,7 +23,7 @@ export class FaqService {
         return await this.faqRepository.getNotice(id);
     }
 
-    async deleteFaq(id: number[]) {
+    async deleteFaq(id: BigInt[]) {
         await this.faqRepository.deleteFaq(id);
     }
 

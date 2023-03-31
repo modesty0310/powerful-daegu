@@ -12,16 +12,17 @@ export class RolesGuard implements CanActivate {
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean>{
-    console.log(context.switchToHttp());
     const ctx = context.switchToHttp();
     const req = ctx.getRequest();
     const payload = req.user;
+    console.log(payload);
     
     const user = await this.userRepository.findUserByEmail(payload.email);
-
+    if(!user) throw new UnauthorizedException('존재 하지 않는 회원입니다.');
+    
     if(user.role === 'admin') {
         return true;
     }
-    throw new UnauthorizedException('권한이 없습니다');
+    throw new UnauthorizedException('권한이 없습니다.');
   }
 }

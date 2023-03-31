@@ -60,7 +60,7 @@ export class QuestionRepository {
         return result;
     }
 
-    async getQuestion(id: number) {
+    async getQuestion(id: BigInt) {
         const result = await this.questionRepository.createQueryBuilder('question')
         .leftJoinAndSelect('question.questioner', 'questioner')
         .leftJoinAndSelect('question.answer', 'answer')
@@ -79,6 +79,16 @@ export class QuestionRepository {
         })
         .where('id = :id', {id: dto.id})
         .execute();
+
+        return result
+    }
+
+    async deleteQuestion(id: BigInt) {
+        const result = await this.questionRepository.createQueryBuilder()
+        .delete()
+        .from(Question)
+        .where('id = :id', {id})
+        .execute()
 
         return result
     }

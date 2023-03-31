@@ -29,6 +29,7 @@ export class UsersRepository {
         
         const user = await this.userRepository.findOne({where: {email}});
         
+        
         return user
     }
 

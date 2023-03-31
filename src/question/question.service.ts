@@ -32,7 +32,7 @@ export class QuestionService {
         return await this.questionRepository.getAllQuestion(category, page);
     }
 
-    async getQuestion(id: number) {
+    async getQuestion(id: BigInt) {
         const result = await this.questionRepository.getQuestion(id);
         if(!result) throw new NotFoundException('질문이 존재 하지 않습니다');
 
@@ -47,6 +47,12 @@ export class QuestionService {
         if(question.answer) throw new BadRequestException('답변이 달린 질문은 수정 할 수 없습니다.');
 
         const result = await this.questionRepository.updateQuestion(dto, user);
+
+        if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
+    }
+
+    async deleteQuestion (id: BigInt) {
+        const result = await this.questionRepository.deleteQuestion(id);
 
         if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
     }
