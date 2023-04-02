@@ -10,10 +10,10 @@ export class CurrentUserDto {
 
     @ApiProperty({
         description: "유저 아이디",
-        type: () => Number,
+        type: () => BigInt,
         example: 1
     })
-    sub: number
+    sub: BigInt
 
     @ApiProperty({
         description: "유저 회원가입 경로",
@@ -21,4 +21,11 @@ export class CurrentUserDto {
         example: 'origin'
     })
     user_type: string
+
+    @ApiProperty({
+        description: '유저 권한',
+        type: String,
+        example: 'user'
+    })
+    role: string
 }

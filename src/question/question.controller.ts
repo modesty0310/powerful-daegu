@@ -47,10 +47,12 @@ export class QuestionController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getQuestion(
-        @Param('id', ParseIntPipe) id: BigInt
+        @Param('id', ParseIntPipe) id: BigInt,
+        @CurrentUser() user: CurrentUserDto
     ) {
-        return await this.questionService.getQuestion(id);
+        return await this.questionService.getQuestion(id, user);
     }
 
     @Patch()
@@ -65,10 +67,12 @@ export class QuestionController {
     }
 
     @Delete()
+    @UseGuards(JwtAuthGuard)
     async deleteQuestion(
-        @Body('id', new ParseArrayPipe({items: Number})) id: BigInt[]
+        @Body('id', new ParseArrayPipe({items: Number})) id: BigInt[],
+        @CurrentUser() user: CurrentUserDto
     ) {
-        await this.questionService.deleteQuestion(id);
+        await this.questionService.deleteQuestion(id, user);
         return {message: '질문을 삭제 하였습니다.'}
     }
 

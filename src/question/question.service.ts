@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UploadService } from 'src/upload/upload.service';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateQuestionDto } from './dto/createQuestion.dto';
@@ -10,7 +10,7 @@ import { QuestionRepository } from './question.repository';
 export class QuestionService {
     constructor(
         private readonly questionRepository: QuestionRepository,
-        private readonly uploadService: UploadService
+        private readonly uploadService: UploadService,
     ) {}
 
     async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto, files?: Express.Multer.File[]) {
@@ -32,10 +32,10 @@ export class QuestionService {
         return await this.questionRepository.getAllQuestion(category, page);
     }
 
-    async getQuestion(id: BigInt) {
+    async getQuestion(id: BigInt, user: CurrentUserDto) {
         const result = await this.questionRepository.getQuestion(id);
         if(!result) throw new NotFoundException('질문이 존재 하지 않습니다');
-
+        if(user.role !== 'admin' && result.questioner.id !== user.sub) throw new UnauthorizedException('권한이 없습니다.')
         return result
     }
 
@@ -44,6 +44,8 @@ export class QuestionService {
 
         if(!question) throw new NotFoundException('질문이 존재 하지 않습니다.');
 
+        if(question.questioner.id !== user.sub) throw new UnauthorizedException('권한이 없습니다.');
+
         if(question.answer) throw new BadRequestException('답변이 달린 질문은 수정 할 수 없습니다.');
 
         const result = await this.questionRepository.updateQuestion(dto, user);
@@ -51,8 +53,8 @@ export class QuestionService {
         if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
     }
 
-    async deleteQuestion (idArr: BigInt[]) {
-        await this.questionRepository.deleteQuestion(idArr);
+    async deleteQuestion (idArr: BigInt[], user: CurrentUserDto) {
+        await this.questionRepository.deleteQuestion(idArr, user);
     }
 
     async getMyQuestion(user: CurrentUserDto) {

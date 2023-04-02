@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ChangePasswordDto } from "./dto/changePassword.dto";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { User } from "./users.entity";
 
@@ -51,7 +50,7 @@ export class UsersRepository {
         .execute();
     }
 
-    async getUser(id: number): Promise<User> {
+    async getUser(id: BigInt): Promise<User> {
         const result: User = await this.userRepository
         .createQueryBuilder('user')
         .select([

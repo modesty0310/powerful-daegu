@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Connection, Repository } from "typeorm";
@@ -69,7 +69,7 @@ export class QuestionRepository {
         .where("question.id = :id", {id})
         .getOne();
 
-        return result
+        return result;
     }
 
     async updateQuestion(dto: UpdateQuestionDto, user:CurrentUserDto) {
@@ -81,15 +81,17 @@ export class QuestionRepository {
         .where('id = :id', {id: dto.id})
         .execute();
 
-        return result
+        return result;
     }
 
-    async deleteQuestion(idArr: BigInt[]) {
+    async deleteQuestion(idArr: BigInt[], user: CurrentUserDto) {
         const queryRunner = this.connection.createQueryRunner();
         await queryRunner.connect(); // 2
         await queryRunner.startTransaction(); // 3
         try {
-            await Promise.all(idArr.map(async id => {        
+            await Promise.all(idArr.map(async id => { 
+                const question = await this.getQuestion(id);
+                if(question.questioner.id !== user.sub) throw new UnauthorizedException('권한이 없습니다.');       
                 const result = await queryRunner.manager.delete(Question, {id});
                 if( result.affected === 0 ) {
                     throw new BadRequestException('존재하지 않는 게시글 입니다.');
@@ -111,7 +113,7 @@ export class QuestionRepository {
         .leftJoinAndSelect('question.questioner', 'questioner')
         .leftJoinAndSelect('question.answer', 'answer')
         .where('question.questioner = :id', {id: user.sub})
-        .execute()
+        .execute();
 
         return result;
     }
