@@ -39,7 +39,7 @@ export class QuestionService {
         return result
     }
 
-    async updateQuestion(dto: UpdateQuestionDto, user: CurrentUserDto) {
+    async updateQuestion(dto: UpdateQuestionDto, user: CurrentUserDto, files: Express.Multer.File[]) {
         const question = await this.questionRepository.getQuestion(dto.id);
 
         if(!question) throw new NotFoundException('질문이 존재 하지 않습니다.');
@@ -54,7 +54,15 @@ export class QuestionService {
     }
 
     async deleteQuestion (idArr: BigInt[], user: CurrentUserDto) {
-        await this.questionRepository.deleteQuestion(idArr, user);
+        const fileArr = await this.questionRepository.deleteQuestion(idArr, user);
+        await Promise.all(fileArr.map(async file => {
+            await Promise.all(file.map(async f => {
+                console.log(f.url);
+                
+                const key = f.url.split(".amazonaws.com/")[1];
+                await this.uploadService.deleteS3Object(key);
+            }))
+        }));
     }
 
     async getMyQuestion(user: CurrentUserDto) {

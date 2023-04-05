@@ -57,11 +57,16 @@ export class QuestionController {
 
     @Patch()
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FilesInterceptor('files'))
     async updateQuestion(
         @Body() dto: UpdateQuestionDto,
-        @CurrentUser() user: CurrentUserDto
+        @CurrentUser() user: CurrentUserDto,
+        @UploadedFiles(
+            new ParseFilePipeBuilder()
+            .build({fileIsRequired: false}),
+        ) files?: Express.Multer.File[],
     ) {
-        await this.questionService.updateQuestion(dto, user);
+        await this.questionService.updateQuestion(dto, user, files);
 
         return {message: '질문을 수정 하였습니다.'};
     }
