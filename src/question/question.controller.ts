@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -18,6 +18,7 @@ export class QuestionController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 등록하기'})
     async createQuestion (
         @Body() dto: CreateQuestionDto,
         @CurrentUser() user: CurrentUserDto, 
@@ -28,6 +29,17 @@ export class QuestionController {
     }
 
     @Get()
+    @ApiOperation({ summary: '1:1 질문 가져오기'})
+    @ApiQuery({
+        name: 'category',
+        required: true,
+        description: '가져올때 카테고리 etc | franchisee | map | all'
+    })
+    @ApiQuery({
+        name: 'page',
+        required: true,
+        description: '가져올 페이지 1부터 시작'
+    })
     async getAllQuestion(
         @Query('category') category: QnaCategory,
         @Query('page') page: number 
@@ -37,6 +49,7 @@ export class QuestionController {
 
     @Get('my')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '내가한 1:1 질문 가져오기'})
     async getMyQuestion(
         @CurrentUser() user: CurrentUserDto
     ) {
@@ -45,6 +58,12 @@ export class QuestionController {
 
     @Get(':id')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 상세보기'})
+    @ApiParam({
+        name: 'id',
+        required: true,
+        description: '가져올 1:1 질문 아이디'
+    })
     async getQuestion(
         @Param('id', ParseIntPipe) id: BigInt,
         @CurrentUser() user: CurrentUserDto
@@ -54,6 +73,7 @@ export class QuestionController {
 
     @Patch()
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 수정'})
     async updateQuestion(
         @Body() dto: UpdateQuestionDto,
         @CurrentUser() user: CurrentUserDto,
@@ -65,6 +85,14 @@ export class QuestionController {
 
     @Delete()
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 삭제'})
+    @ApiBody({
+        description: '삭제할 질문 아이디 배열',
+        schema: {
+            type: 'array',
+            items: {type: 'number'}
+        },
+    })
     async deleteQuestion(
         @Body('id', new ParseArrayPipe({items: Number})) id: BigInt[],
         @CurrentUser() user: CurrentUserDto

@@ -84,7 +84,8 @@ export class QuestionRepository {
         const result = await this.questionRepository.createQueryBuilder()
         .update(Question)
         .set({
-            question: dto.question
+            question: dto.question,
+            category: dto.category
         })
         .where('id = :id', {id: dto.id})
         .execute();
@@ -96,13 +97,9 @@ export class QuestionRepository {
         const queryRunner = this.connection.createQueryRunner();
         await queryRunner.connect(); // 2
         await queryRunner.startTransaction(); // 3
-        const fileArr = []
         try {
             await Promise.all(idArr.map(async id => { 
                 const question = await this.getQuestion(id);
-                if(question.file) {
-                    fileArr.push(question.file)
-                }
                 if(question.questioner.id !== user.sub) throw new UnauthorizedException('권한이 없습니다.');       
                 const result = await queryRunner.manager.delete(Question, {id});
                 if( result.affected === 0 ) {
@@ -116,8 +113,6 @@ export class QuestionRepository {
         }
         await queryRunner.commitTransaction();
         await queryRunner.release();
-        
-        return fileArr;
     }
 
     async getMyQuestion(user: CurrentUserDto) {
