@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseFilePipeBuilder, ParseIntPipe, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -9,6 +10,7 @@ import { QnaCategory } from './question.entity';
 import { QuestionService } from './question.service';
 
 @Controller('question')
+@ApiTags('question')
 export class QuestionController {
     constructor(
         private readonly questionService: QuestionService

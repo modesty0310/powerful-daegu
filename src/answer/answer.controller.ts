@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { AnswerService } from './answer.service';
@@ -7,12 +9,14 @@ import { CreateAnswerDto } from './dto/createAnswer.dto';
 import { UpdateAnswerDto } from './dto/updateAnswer.dto';
 
 @Controller('answer')
+@ApiTags('answer')
 export class AnswerController {
     constructor(
         private readonly answerService: AnswerService
     ) {}
 
     @Post()
+    @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     async createAnswer(
         @Body() dto: CreateAnswerDto,

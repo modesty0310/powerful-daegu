@@ -57,9 +57,8 @@ export class QuestionService {
         const fileArr = await this.questionRepository.deleteQuestion(idArr, user);
         await Promise.all(fileArr.map(async file => {
             await Promise.all(file.map(async f => {
-                console.log(f.url);
-                
-                const key = f.url.split(".amazonaws.com/")[1];
+                const url = decodeURIComponent(f.url);
+                const key = url.split(".amazonaws.com/")[1];
                 await this.uploadService.deleteS3Object(key);
             }))
         }));
