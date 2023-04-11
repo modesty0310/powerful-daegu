@@ -27,6 +27,8 @@ export class AnswerController {
     }
 
     @Delete(':id')
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     async deleteAnswer(
         @Param('id', ParseIntPipe) id: number
     ) {
@@ -35,6 +37,8 @@ export class AnswerController {
     }
 
     @Patch()
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     async updateAnswer(
         @Body() dto: UpdateAnswerDto
     ) {
