@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateNoticeDto } from './dto/updateNotice.dto';
 import { Category } from './notice.entity';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseAllNotice } from './dto/responseAllNotice.dto';
 import { SuccessResponseInterceptor } from 'src/common/interceptors/success-response.interceptor';
 import { ResponseNoticeDto } from './dto/responseNotice.dto';
@@ -23,6 +23,7 @@ export class NoticeController {
     ) {}
 
     @Get()
+    @ApiOperation({ summary: '공지사항 가져오기'})
     @ApiQuery({
         name: 'category',
         required: true,
@@ -44,6 +45,7 @@ export class NoticeController {
     }    
 
     @Get(':id')
+    @ApiOperation({ summary: '공지사항 상세보기'})
     @ApiParam({
         name: 'id',
         required: true,
@@ -58,9 +60,10 @@ export class NoticeController {
     }
 
     @Post()
-    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '공지사항 생성하기'})
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     async createNotice(
         @Body() dto: CreateNoticeDto,
         @CurrentUser() user: CurrentUserDto
@@ -72,6 +75,9 @@ export class NoticeController {
     }
 
     @Delete()
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '공지사항 삭제하기'})
     @ApiBody({
         description: '삭제할 공지사항 아이디 array',
         schema: {
@@ -80,8 +86,6 @@ export class NoticeController {
         }
     })
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
-    @UseGuards(RolesGuard)
-    @UseGuards(JwtAuthGuard)
     async deleteNotice(
         @Body('id', new ParseArrayPipe({items: Number})) id: number[]
     ) {
@@ -90,9 +94,10 @@ export class NoticeController {
     }
 
     @Patch()
-    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '공지사항 수정하기'})
+    @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     async updateNotice(
         @Body() dto: UpdateNoticeDto
     ) {

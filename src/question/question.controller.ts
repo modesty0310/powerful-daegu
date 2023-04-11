@@ -18,16 +18,11 @@ export class QuestionController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FilesInterceptor('files'))
     async createQuestion (
         @Body() dto: CreateQuestionDto,
-        @CurrentUser() user: CurrentUserDto,
-        @UploadedFiles(
-            new ParseFilePipeBuilder()
-            .build({fileIsRequired: false}),
-        ) files?: Express.Multer.File[],     
+        @CurrentUser() user: CurrentUserDto, 
     ) {
-        await this.questionService.createQuestion(dto, user, files);
+        await this.questionService.createQuestion(dto, user);
 
         return {message: '1:1 문의 등록이 완료 되었습니다.'};
     }
@@ -59,16 +54,11 @@ export class QuestionController {
 
     @Patch()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FilesInterceptor('files'))
     async updateQuestion(
         @Body() dto: UpdateQuestionDto,
         @CurrentUser() user: CurrentUserDto,
-        @UploadedFiles(
-            new ParseFilePipeBuilder()
-            .build({fileIsRequired: false}),
-        ) files?: Express.Multer.File[],
     ) {
-        await this.questionService.updateQuestion(dto, user, files);
+        await this.questionService.updateQuestion(dto, user);
 
         return {message: '질문을 수정 하였습니다.'};
     }

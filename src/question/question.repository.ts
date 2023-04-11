@@ -33,19 +33,27 @@ export class QuestionRepository {
         return result;
     }
 
-    async saveFile(qnaId: number, urls: string[]) {
+    async saveFile(questionId: BigInt, urls: string[]) {
         await Promise.all(urls.map(async url => {
             await this.questionFileRepository.createQueryBuilder()
             .insert()
             .into(QuestionFile)
             .values({
                 question: {
-                    id: qnaId
+                    id: questionId
                 },
                 url
             })
             .execute();
         }))
+    }
+
+    async deleteFile(questionId: BigInt) {
+        await this.questionFileRepository.createQueryBuilder()
+        .delete()
+        .from(QuestionFile)
+        .where('id = :id', {id: questionId})
+        .execute();
     }
 
     async getAllQuestion(category: QnaCategory, page: number) {

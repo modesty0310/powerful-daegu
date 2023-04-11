@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ResponseAllFaq } from 'src/faq/dto/responseAllFaq.dto';
@@ -22,6 +22,7 @@ export class FaqController {
     @Post()
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'FAQ 작성하기'})
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     async createFaq(
         @Body() dto: CreateFaqDto,
@@ -33,6 +34,7 @@ export class FaqController {
     }
 
     @Get()
+    @ApiOperation({ summary: '모든 FAQ 가져오기'})
     @ApiQuery({
         name: 'category',
         required: true,
@@ -52,6 +54,7 @@ export class FaqController {
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'FAQ 상세 보기'})
     @ApiParam({
         name: 'id',
         required: true,
@@ -65,6 +68,7 @@ export class FaqController {
     }
 
     @Delete()
+    @ApiOperation({ summary: 'FAQ 삭제하기'})
     @ApiBody({
         description: '삭제할 FAQ 아이디 array',
         schema: {
@@ -83,6 +87,7 @@ export class FaqController {
     }
 
     @Patch()
+    @ApiOperation({ summary: 'FAQ 삭제하기'})
     @ApiResponse({status: 200, description:"성공", type: SuccessReponseMessageDto})
     async updateFaq(
         @Body() dto: UpdateFaqDto

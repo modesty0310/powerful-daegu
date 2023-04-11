@@ -13,19 +13,11 @@ export class QuestionService {
         private readonly uploadService: UploadService,
     ) {}
 
-    async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto, files?: Express.Multer.File[]) {
+    async createQuestion(dto: CreateQuestionDto, user: CurrentUserDto) {
         const question = await this.questionRepository.createQuestion(dto, user);
         const questionId = question.identifiers[0].id;
         
-        if(files) {
-            const urlArr = [];
-            await Promise.all(files.map(async file => {
-                const {url} = await this.uploadService.uploadFileToS3('qna', file);
-                urlArr.push(url);
-            }));
-
-            await this.questionRepository.saveFile(questionId, urlArr);
-        }
+        await this.questionRepository.saveFile(questionId, dto.urls);
     }
 
     async getAllQuestion(page: number, category: QnaCategory) {
@@ -39,7 +31,7 @@ export class QuestionService {
         return result
     }
 
-    async updateQuestion(dto: UpdateQuestionDto, user: CurrentUserDto, files: Express.Multer.File[]) {
+    async updateQuestion(dto: UpdateQuestionDto, user: CurrentUserDto) {
         const question = await this.questionRepository.getQuestion(dto.id);
 
         if(!question) throw new NotFoundException('질문이 존재 하지 않습니다.');
@@ -48,19 +40,19 @@ export class QuestionService {
 
         if(question.answer) throw new BadRequestException('답변이 달린 질문은 수정 할 수 없습니다.');
 
+        await this.questionRepository.deleteFile(question.id);
+
+        await this.questionRepository.saveFile(question.id, dto.urls);
+
         const result = await this.questionRepository.updateQuestion(dto, user);
 
         if(result.affected === 0) throw new NotFoundException('질문이 존재 하지 않습니다.');
     }
 
     async deleteQuestion (idArr: BigInt[], user: CurrentUserDto) {
-        const fileArr = await this.questionRepository.deleteQuestion(idArr, user);
-        await Promise.all(fileArr.map(async file => {
-            await Promise.all(file.map(async f => {
-                const url = decodeURIComponent(f.url);
-                const key = url.split(".amazonaws.com/")[1];
-                await this.uploadService.deleteS3Object(key);
-            }))
+        await this.questionRepository.deleteQuestion(idArr, user);
+        await Promise.all(idArr.map(async id => {
+            await this.questionRepository.deleteFile(id);
         }));
     }
 

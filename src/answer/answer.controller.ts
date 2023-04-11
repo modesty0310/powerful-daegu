@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
@@ -18,6 +18,7 @@ export class AnswerController {
     @Post()
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 답변하기'})
     async createAnswer(
         @Body() dto: CreateAnswerDto,
         @CurrentUser() user: CurrentUserDto
@@ -29,6 +30,12 @@ export class AnswerController {
     @Delete(':id')
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 삭제하기'})
+    @ApiParam({
+        name: 'id',
+        required: true,
+        description: '삭제할 답변 아이디'
+    })
     async deleteAnswer(
         @Param('id', ParseIntPipe) id: number
     ) {
@@ -39,10 +46,10 @@ export class AnswerController {
     @Patch()
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '1:1 질문 수정하기'})
     async updateAnswer(
         @Body() dto: UpdateAnswerDto
     ) {
-        console.log(dto);
         await this.answerService.updateAnswer(dto);
     }
 }
