@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Menu } from "./menu.entity";
 
 @Entity()
-export class Stroe extends CommonEntity {
+export class Store extends CommonEntity {
     @ApiProperty({
         description: '가게 아이디',
         type: BigInt,
@@ -137,4 +138,7 @@ export class Stroe extends CommonEntity {
     })
     @IsString()
     point: boolean
+
+    @OneToMany(() => Menu, (menu) => menu.store_id)
+    menu: Menu
 }
