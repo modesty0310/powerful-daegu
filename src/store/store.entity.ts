@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Menu } from "./menu.entity";
+import { StoreType } from "./storeType.entity";
+import { Point } from 'wkx';
 
 @Entity()
 export class Store extends CommonEntity {
@@ -13,6 +15,14 @@ export class Store extends CommonEntity {
     })
     @PrimaryGeneratedColumn('increment')
     id: BigInt
+
+    @ApiProperty({ type: StoreType })
+    @IsNotEmpty()
+    @ManyToOne(() => StoreType, (store_type) => store_type.food_code, {nullable: false})
+    @JoinColumn([
+        { name: "food_code", referencedColumnName: "food_code" },
+    ])
+    store_type: StoreType
 
     @Column()
     @ApiProperty({
@@ -132,12 +142,12 @@ export class Store extends CommonEntity {
     @IsString()
     delivery: boolean
 
-    @Column({ type: 'point' })
+    @Column('point')
     @ApiProperty({
         description: '가게 위치 좌표',
     })
     @IsString()
-    point: boolean
+    point: Point
 
     @OneToMany(() => Menu, (menu) => menu.store_id)
     menu: Menu

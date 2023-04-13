@@ -30,6 +30,7 @@ import { StoreModule } from './store/store.module';
       synchronize: false,
       autoLoadEntities: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
+      legacySpatialSupport: false
     }),
     // mailer
     MailerModule.forRootAsync({

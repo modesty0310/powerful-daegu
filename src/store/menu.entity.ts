@@ -16,7 +16,7 @@ export class Menu extends CommonEntity {
     @ApiProperty({type: Store})
     @ManyToOne(() => Store, (store) => store.menu, {nullable: false})
     @JoinColumn([
-        { name: "store", referencedColumnName: "id" },
+        { name: "store_id", referencedColumnName: "id" },
     ])
     store_id: Store
 
