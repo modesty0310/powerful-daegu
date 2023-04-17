@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { GetSearchDto } from "./dto/getSearch.dto";
 import { Store } from "./store.entity";
 
 @Injectable()
@@ -18,5 +19,9 @@ export class StoreRepository {
         .getOne();
 
         return result;
+    }
+
+    async getSerchStore(query: GetSearchDto) {
+        
     }
 }

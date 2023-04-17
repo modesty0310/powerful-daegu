@@ -1,5 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { GetSearchDto } from './dto/getSearch.dto';
 import { StoreService } from './store.service';
 
 @Controller('store')
@@ -16,4 +17,10 @@ export class StoreController {
         return await this.storeService.getStoreDetail(id);
     }
 
+    @Get('/search')
+    async getSearchStore(
+        @Query() query: GetSearchDto
+    ) {
+        
+    }
 }
