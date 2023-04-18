@@ -10,4 +10,8 @@ export class StoreService {
     async getStoreDetail(id: BigInt) {
         return this.storeRepository.getStoreDetail(id);
     }
+
+    async getAllStore() {
+        return await this.storeRepository.getAllStore();
+    }
 }

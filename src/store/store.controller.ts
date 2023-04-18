@@ -10,17 +10,22 @@ export class StoreController {
         private readonly storeService: StoreService
     ){}
 
-    @Get(':id')
-    async getStoreDetail(
-        @Param('id', ParseIntPipe) id: BigInt
-    ) {
-        return await this.storeService.getStoreDetail(id);
-    }
-
     @Get('/search')
     async getSearchStore(
         @Query() query: GetSearchDto
     ) {
         
+    }
+
+    @Get('/all')
+    async getAllStore() {
+        return await this.storeService.getAllStore()
+    }
+
+    @Get(':id')
+    async getStoreDetail(
+        @Param('id', ParseIntPipe) id: BigInt
+    ) {
+        return await this.storeService.getStoreDetail(id);
     }
 }

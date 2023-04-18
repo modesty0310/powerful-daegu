@@ -22,6 +22,14 @@ export class StoreRepository {
     }
 
     async getSerchStore(query: GetSearchDto) {
-        
+        const result = await this.storeRepository.createQueryBuilder()
+    }
+
+    async getAllStore() {
+        const result = await this.storeRepository.createQueryBuilder('store')
+        .leftJoinAndSelect('store.store_type', 'store_type')
+        .getMany();
+
+        return result;
     }
 }
