@@ -14,7 +14,7 @@ export class StoreController {
     async getSearchStore(
         @Query() query: GetSearchDto
     ) {
-        
+        return await this.storeService.getSearchStore(query);
     }
 
     @Get('/all')
