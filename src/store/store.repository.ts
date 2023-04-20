@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
@@ -60,6 +60,25 @@ export class StoreRepository {
             store: {id: store_id},
         })
         .execute()        
+    }
+
+    async deleteStoreLike(store_like_id: BigInt, user_id: BigInt) {
+        const store_like = await this.storeLikeRepository.createQueryBuilder('store_like')
+        .leftJoinAndSelect('store_like.user', 'user')
+        .where('store_like.id = :store_like_id', {store_like_id})
+        .getOne()
+
+        if(!store_like) throw new BadRequestException('좋아요가 존재하지 않습니다.')
+
+        if(store_like && store_like.user.id !== user_id) throw new UnauthorizedException('권한이 없습니다.')
+
+        const result = await this.storeLikeRepository.createQueryBuilder()
+        .delete()
+        .from(StoreLike)
+        .where('id = :id', {id: store_like_id})
+        .execute()
+        console.log(result);
+        
     }
 
     async getAllStoreLike(user_id: BigInt) {

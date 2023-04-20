@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { GetSearchDto } from './dto/getSearch.dto';
 import { SetStoreLikeDto } from './dto/setStoreLike.dto';
+import { DeleteStoreLikeDto } from './dto/deleteStoreLike.dto';
 import { StoreService } from './store.service';
 
 @Controller('store')
@@ -31,10 +32,18 @@ export class StoreController {
     async setStoreLike(
         @Body() dto: SetStoreLikeDto,
         @CurrentUser() user: CurrentUserDto, 
-    ) {
-        console.log(dto.id, user.sub);
-        
+    ) {        
         await this.storeService.setStoreLike(dto.id, user.sub)
+        return
+    }
+
+    @Delete('/like')
+    @UseGuards(JwtAuthGuard)
+    async deleteStoreLike(
+        @Body() dto: DeleteStoreLikeDto,
+        @CurrentUser() user: CurrentUserDto, 
+    ) {
+        await this.storeService.deleteStoreLike(dto.id, user.sub)
         return
     }
 
