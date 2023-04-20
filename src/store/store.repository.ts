@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
@@ -44,6 +44,14 @@ export class StoreRepository {
     }
 
     async setStoreLike(store_id: BigInt, user_id: BigInt) {
+        const like = await this.storeLikeRepository.createQueryBuilder('store_like')
+        .select()
+        .where('store_like.store = :store_id', {store_id})
+        .andWhere('store_like.user = :user_id', {user_id})
+        .getOne();
+
+        if(like) throw new BadRequestException('이미 등록된 가게입니다.');
+
         const result = await this.storeLikeRepository.createQueryBuilder()
         .insert()
         .into(StoreLike)
@@ -51,8 +59,6 @@ export class StoreRepository {
             user: {id: user_id},
             store: {id: store_id},
         })
-        .execute()
-        console.log(result);
-        
+        .execute()        
     }
 }
