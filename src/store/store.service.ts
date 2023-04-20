@@ -32,4 +32,8 @@ export class StoreService {
     async getAllStore() {
         return await this.storeRepository.getAllStore();
     }
+
+    async setStoreLike(store_id: BigInt, user_id: BigInt) {
+        await this.storeRepository.setStoreLike(store_id, user_id);
+    }
 }

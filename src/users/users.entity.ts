@@ -6,7 +6,9 @@ import { CommonEntity } from "src/common/entities/common.entity";
 import { Faq } from "src/faq/faq.entity";
 import { Notice } from "src/notice/notice.entity";
 import { Question } from "src/question/question.entity";
-import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Store } from "src/store/store.entity";
+import { StoreLike } from "src/store/storeLike.entity";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 enum UserType {
     origin = "origin", 
@@ -118,4 +120,7 @@ export class User extends CommonEntity{
 
     @OneToMany(() => Answer, (answer) => answer.answerer)
     answerer: Answer
+
+    @OneToMany(() => StoreLike, (store_like) => store_like.user)
+    store_like: StoreLike
 }

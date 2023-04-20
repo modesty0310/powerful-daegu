@@ -5,6 +5,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { Menu } from "./menu.entity";
 import { StoreType } from "./storeType.entity";
 import { Point } from 'wkx';
+import { StoreLike } from "./storeLike.entity";
 
 @Entity()
 export class Store extends CommonEntity {
@@ -151,4 +152,7 @@ export class Store extends CommonEntity {
 
     @OneToMany(() => Menu, (menu) => menu.store_id)
     menu: Menu
+
+    @OneToMany(() => StoreLike, (store_like) => store_like.store)
+    store_like: StoreLike
 }

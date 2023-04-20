@@ -3,12 +3,16 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
 import { Store } from "./store.entity";
+import { StoreLike } from "./storeLike.entity";
 
 @Injectable()
 export class StoreRepository {
     constructor(
         @InjectRepository(Store)
-        private readonly storeRepository: Repository<Store>
+        private readonly storeRepository: Repository<Store>,
+
+        @InjectRepository(StoreLike)
+        private readonly storeLikeRepository: Repository<StoreLike>
     ){}
 
     async getStoreDetail(id: BigInt) {
@@ -22,23 +26,13 @@ export class StoreRepository {
     }
 
     async getSerchStore(query: object, dto: GetSearchDto) {
-        const result = await this.storeRepository.find({
-            where: {
-                ...query
-            }
-        })
-
-        const result2 = await this.storeRepository.createQueryBuilder('store')
+        const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
         .andWhere('store.city_name like :city_name', {city_name: `%${dto.region ?? ''}%`})
         .getMany()
 
-        console.log(result2);
-        
-
-        // console.log(result);
-        
+        return result;        
     }
 
     async getAllStore() {
@@ -47,5 +41,18 @@ export class StoreRepository {
         .getMany();
 
         return result;
+    }
+
+    async setStoreLike(store_id: BigInt, user_id: BigInt) {
+        const result = await this.storeLikeRepository.createQueryBuilder()
+        .insert()
+        .into(StoreLike)
+        .values({
+            user: {id: user_id},
+            store: {id: store_id},
+        })
+        .execute()
+        console.log(result);
+        
     }
 }
