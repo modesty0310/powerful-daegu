@@ -36,4 +36,8 @@ export class StoreService {
     async setStoreLike(store_id: BigInt, user_id: BigInt) {
         await this.storeRepository.setStoreLike(store_id, user_id);
     }
+
+    async getAllStoreLike(user_id: BigInt) {
+        return this.storeRepository.getAllStoreLike(user_id)
+    }
 }

@@ -38,6 +38,14 @@ export class StoreController {
         return
     }
 
+    @Get('/like')
+    @UseGuards(JwtAuthGuard)
+    async getAllStoreLike(
+        @CurrentUser() user: CurrentUserDto, 
+    ) {
+        return await this.storeService.getAllStoreLike(user.sub)
+    }
+
     @Get(':id')
     async getStoreDetail(
         @Param('id', ParseIntPipe) id: BigInt,

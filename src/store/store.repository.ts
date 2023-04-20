@@ -61,4 +61,15 @@ export class StoreRepository {
         })
         .execute()        
     }
+
+    async getAllStoreLike(user_id: BigInt) {
+        const result = await this.storeLikeRepository.createQueryBuilder('store_like')
+        .leftJoinAndSelect('store_like.store', 'store')
+        .where('store_like.user = :user_id', {user_id})
+        .getMany()
+
+        console.log(result);
+        return result
+        
+    }
 }
