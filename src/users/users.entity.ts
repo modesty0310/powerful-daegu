@@ -7,6 +7,7 @@ import { Faq } from "src/faq/faq.entity";
 import { Notice } from "src/notice/notice.entity";
 import { Question } from "src/question/question.entity";
 import { Store } from "src/store/store.entity";
+import { StoreDirection } from "src/store/storeDirection.entity";
 import { StoreLike } from "src/store/storeLike.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
@@ -123,4 +124,7 @@ export class User extends CommonEntity{
 
     @OneToMany(() => StoreLike, (store_like) => store_like.user)
     store_like: StoreLike
+
+    @OneToMany(() => StoreDirection, (store_direction) => store_direction.user)
+    store_direction: StoreLike
 }

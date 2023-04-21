@@ -7,6 +7,7 @@ import { GetSearchDto } from './dto/getSearch.dto';
 import { SetStoreLikeDto } from './dto/setStoreLike.dto';
 import { DeleteStoreLikeDto } from './dto/deleteStoreLike.dto';
 import { StoreService } from './store.service';
+import { SetDirectionDto } from './dto/setDirection.dto';
 
 @Controller('store')
 @ApiTags('Store')
@@ -53,6 +54,34 @@ export class StoreController {
         @CurrentUser() user: CurrentUserDto, 
     ) {
         return await this.storeService.getAllStoreLike(user.sub)
+    }
+
+    @Post('/direction')
+    @UseGuards(JwtAuthGuard)
+    async setDirection(
+        @Body() dto: SetDirectionDto,
+        @CurrentUser() user: CurrentUserDto, 
+    ) {        
+        await this.storeService.setDirection(dto.url, user.sub)
+        return
+    }
+
+    @Delete('/direction')
+    @UseGuards(JwtAuthGuard)
+    async deleteDirection(
+        @Body() dto: DeleteStoreLikeDto,
+        @CurrentUser() user: CurrentUserDto, 
+    ) {
+        await this.storeService.deleteDirection(dto.id, user.sub)
+        return
+    }
+
+    @Get('/direction')
+    @UseGuards(JwtAuthGuard)
+    async getAllDirection(
+        @CurrentUser() user: CurrentUserDto, 
+    ) {
+        return await this.storeService.getAllDirection(user.sub)
     }
 
     @Get(':id')

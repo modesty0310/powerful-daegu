@@ -31,7 +31,9 @@ import { MapsModule } from './maps/maps.module';
       synchronize: false,
       autoLoadEntities: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
-      legacySpatialSupport: false
+      legacySpatialSupport: false,
+      migrations: [__dirname + '/database/migrations/**/*.ts'],
+      migrationsTableName: "migrations",
     }),
     // mailer
     MailerModule.forRootAsync({
