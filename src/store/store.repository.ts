@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
 import { Store } from "./store.entity";
+import { StoreDirection } from "./storeDirection.entity";
 import { StoreLike } from "./storeLike.entity";
 
 @Injectable()
@@ -12,7 +13,10 @@ export class StoreRepository {
         private readonly storeRepository: Repository<Store>,
 
         @InjectRepository(StoreLike)
-        private readonly storeLikeRepository: Repository<StoreLike>
+        private readonly storeLikeRepository: Repository<StoreLike>,
+
+        @InjectRepository(StoreDirection)
+        private readonly directionRepository: Repository<StoreDirection>
     ){}
 
     async getStoreDetail(id: BigInt) {
@@ -25,7 +29,7 @@ export class StoreRepository {
         return result;
     }
 
-    async getSerchStore(query: object, dto: GetSearchDto) {
+    async getSerchStore(dto: GetSearchDto) {
         const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
@@ -85,6 +89,55 @@ export class StoreRepository {
         const result = await this.storeLikeRepository.createQueryBuilder('store_like')
         .leftJoinAndSelect('store_like.store', 'store')
         .where('store_like.user = :user_id', {user_id})
+        .getMany()
+
+        console.log(result);
+        return result
+        
+    }
+
+    async setDirection(url: string, user_id: BigInt) {
+        const like = await this.directionRepository.createQueryBuilder('direction')
+        .select()
+        .where('direction.url = :url', {url})
+        .andWhere('direction.user = :user_id', {user_id})
+        .getOne();
+
+        if(like) throw new BadRequestException('이미 등록된 경로입니다.');
+
+        const result = await this.directionRepository.createQueryBuilder()
+        .insert()
+        .into(StoreDirection)
+        .values({
+            user: {id: user_id},
+            url
+        })
+        .execute()        
+    }
+
+    async deleteDirection(direction_id: BigInt, user_id: BigInt) {
+        const direction = await this.directionRepository.createQueryBuilder('direction')
+        .leftJoinAndSelect('direction.user', 'user')
+        .where('direction.id = :direction_id', {direction_id})
+        .getOne()
+
+        if(!direction) throw new BadRequestException('좋아요가 존재하지 않습니다.')
+
+        if(direction && direction.user.id !== user_id) throw new UnauthorizedException('권한이 없습니다.')
+
+        const result = await this.directionRepository.createQueryBuilder()
+        .delete()
+        .from(StoreDirection)
+        .where('id = :id', {id: direction_id})
+        .execute()
+        console.log(result);
+        
+    }
+
+    async getAllDirection(user_id: BigInt) {
+        const result = await this.directionRepository.createQueryBuilder('direction')
+        .select()
+        .where('direction.user = :user_id', {user_id})
         .getMany()
 
         console.log(result);

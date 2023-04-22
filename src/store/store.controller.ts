@@ -8,6 +8,7 @@ import { SetStoreLikeDto } from './dto/setStoreLike.dto';
 import { DeleteStoreLikeDto } from './dto/deleteStoreLike.dto';
 import { StoreService } from './store.service';
 import { SetDirectionDto } from './dto/setDirection.dto';
+import { DeleteDirectionDto } from './dto/deleteDirection.dto';
 
 @Controller('store')
 @ApiTags('Store')
@@ -69,7 +70,7 @@ export class StoreController {
     @Delete('/direction')
     @UseGuards(JwtAuthGuard)
     async deleteDirection(
-        @Body() dto: DeleteStoreLikeDto,
+        @Body() dto: DeleteDirectionDto,
         @CurrentUser() user: CurrentUserDto, 
     ) {
         await this.storeService.deleteDirection(dto.id, user.sub)

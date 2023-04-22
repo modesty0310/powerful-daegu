@@ -15,18 +15,7 @@ export class StoreService {
     }
 
     async getSearchStore(dto: GetSearchDto) {
-        let query = {}
-        if(dto.region) {
-            query = {
-                city_name: Like(`%${dto.region}%`)
-            }
-        }else if(dto.storename) {
-            query = {
-                ...query,
-                name: Like(`%${dto.storename}%`) 
-            }
-        }
-        return await this.storeRepository.getSerchStore(query, dto);
+        return await this.storeRepository.getSerchStore(dto);
     }
 
     async getAllStore() {
@@ -45,15 +34,15 @@ export class StoreService {
         return this.storeRepository.getAllStoreLike(user_id)
     }
 
-    async setDirection(store_id: BigInt, user_id: BigInt) {
-        await this.storeRepository.setStoreLike(store_id, user_id);
+    async setDirection(url: string, user_id: BigInt) {
+        await this.storeRepository.setDirection(url, user_id);
     }
 
-    async deleteDirection(store_like_id: BigInt, user_id: BigInt) {
-        await this.storeRepository.deleteStoreLike(store_like_id, user_id);
+    async deleteDirection(direction_id: BigInt, user_id: BigInt) {
+        await this.storeRepository.deleteDirection(direction_id, user_id);
     }
 
     async getAllDirection(user_id: BigInt) {
-        return this.storeRepository.getAllStoreLike(user_id)
+        return this.storeRepository.getAllDirection(user_id)
     }
 }
