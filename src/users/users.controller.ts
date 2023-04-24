@@ -44,9 +44,8 @@ export class UsersController {
         @Body() dto: LoginDto,
         @Res({passthrough: true}) response: Response
     ) {
-        await this.authService.jwtLogIn(dto, response);
-        
-        return {message: "로그인"}
+       
+        return  await this.authService.jwtLogIn(dto, response);
     }
 
     @ApiOperation({ summary: '이메일 확인 코드 발급'})
@@ -98,8 +97,8 @@ export class UsersController {
         @CurrentUser() user: SocialOauthDto,
         @Res({passthrough: true}) response: Response
     ) {                
-        await this.authService.socialLogIn(user.email, response);
-        return {message: "로그인"}
+       
+        return  await this.authService.socialLogIn(user.email, response);
     }
     @UseGuards(NaverSignupGuard)
     @Get('naver/signup')
@@ -114,8 +113,7 @@ export class UsersController {
         @CurrentUser() user: SocialOauthDto,
         @Res({passthrough: true}) response: Response
     ) {
-        await this.authService.socialLogIn(user.email, response);
-        return {message: "로그인"}
+        return await this.authService.socialLogIn(user.email, response);
     }
     @UseGuards(KakaoSignupGuard)
     @Get('kakao/signup')
@@ -130,8 +128,7 @@ export class UsersController {
         @CurrentUser() user: SocialOauthDto,
         @Res({passthrough: true}) response: Response
     ) {
-        await this.authService.socialLogIn(user.email, response);
-        return {message: "로그인"}
+        return await this.authService.socialLogIn(user.email, response);
     }
 
     @Post()

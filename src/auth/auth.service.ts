@@ -38,7 +38,7 @@ export class AuthService {
             email: email, sub: user.id, user_type: user.user_type, role: user.role
         }
         res.cookie('access_token',  this.jwtService.sign(payload), {httpOnly: true});
-        return 
+        return {access_token: this.jwtService.sign(payload)}
     }
 
     async socialSignUp(user: SocialOauthDto): Promise<SocialOauthDto> {
@@ -68,6 +68,6 @@ export class AuthService {
             email: email, sub: user.id, user_type: user.user_type, role: user.role
         }
         res.cookie('access_token', this.jwtService.sign(payload), {httpOnly: true});
-        return;
+        return {access_token: this.jwtService.sign(payload)};
     }
 }
