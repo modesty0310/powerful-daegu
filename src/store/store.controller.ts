@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -9,6 +9,8 @@ import { DeleteStoreLikeDto } from './dto/deleteStoreLike.dto';
 import { StoreService } from './store.service';
 import { SetDirectionDto } from './dto/setDirection.dto';
 import { DeleteDirectionDto } from './dto/deleteDirection.dto';
+import { Store } from './store.entity';
+import { StoreDirection } from './storeDirection.entity';
 
 @Controller('store')
 @ApiTags('Store')
@@ -18,6 +20,8 @@ export class StoreController {
     ){}
 
     @Get('/search')
+    @ApiOperation({ summary: '가게 검색하기'})
+    @ApiResponse({status: 200, description: '성공', type: OmitType(Store, ['menu'])})
     async getSearchStore(
         @Query() query: GetSearchDto
     ) {
@@ -25,12 +29,16 @@ export class StoreController {
     }
 
     @Get('/all')
+    @ApiOperation({ summary: '모든 가게 가져오기'})
+    @ApiResponse({status: 200, description: '성공', type: [OmitType(Store, ['menu'])]})
     async getAllStore() {
         return await this.storeService.getAllStore()
     }
 
     @Post('/like')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '가게 좋아요 등록'})
+    @ApiResponse({status: 200, description: '성공', type: null})
     async setStoreLike(
         @Body() dto: SetStoreLikeDto,
         @CurrentUser() user: CurrentUserDto, 
@@ -41,6 +49,8 @@ export class StoreController {
 
     @Delete('/like')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '가게 좋아요 삭제'})
+    @ApiResponse({status: 200, description: '성공', type: null})
     async deleteStoreLike(
         @Body() dto: DeleteStoreLikeDto,
         @CurrentUser() user: CurrentUserDto, 
@@ -51,6 +61,8 @@ export class StoreController {
 
     @Get('/like')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '가게 좋아요 조회'})
+    @ApiResponse({status: 200, description: '성공', type: OmitType(Store, ['store_type', 'menu'])})
     async getAllStoreLike(
         @CurrentUser() user: CurrentUserDto, 
     ) {
@@ -59,6 +71,8 @@ export class StoreController {
 
     @Post('/direction')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '경로 좋아요 등록'})
+    @ApiResponse({status: 200, description: '성공', type: null})
     async setDirection(
         @Body() dto: SetDirectionDto,
         @CurrentUser() user: CurrentUserDto, 
@@ -69,6 +83,8 @@ export class StoreController {
 
     @Delete('/direction')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '경로 좋아요 삭제'})
+    @ApiResponse({status: 200, description: '성공', type: null})
     async deleteDirection(
         @Body() dto: DeleteDirectionDto,
         @CurrentUser() user: CurrentUserDto, 
@@ -79,15 +95,20 @@ export class StoreController {
 
     @Get('/direction')
     @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '경로 좋아요 조회'})
+    @ApiResponse({status: 200, description: '성공', type: StoreDirection})
     async getAllDirection(
         @CurrentUser() user: CurrentUserDto, 
     ) {
         return await this.storeService.getAllDirection(user.sub)
     }
 
-    @Get(':id')
+    @Get('')
+    @ApiOperation({ summary: '가게 상세보기'})
+    @ApiQuery({description: '아이디', example: 1})
+    @ApiResponse({status: 200, description: '성공', type: Store})
     async getStoreDetail(
-        @Param('id', ParseIntPipe) id: BigInt,
+        @Query('id', ParseIntPipe) id: BigInt,
     ) {
         return await this.storeService.getStoreDetail(id);
     }

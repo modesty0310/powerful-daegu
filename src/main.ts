@@ -10,7 +10,7 @@ import * as expressBasicAuth from 'express-basic-auth';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // winston 추가
-    logger: winstonLogger
+    logger: winstonLogger,
   });
 
   // 관리자만 접속가능 한 엔드 포인트
@@ -39,11 +39,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.use(cookieParser());
+  
   app.enableCors({
-    origin: true,
+    origin: 'http://localhost:3000',
     credentials: true,
   });
+  app.use(cookieParser());
 
   const port = process.env.PORT;
   await app.listen(port);

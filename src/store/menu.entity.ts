@@ -13,7 +13,6 @@ export class Menu extends CommonEntity {
     @PrimaryGeneratedColumn('increment')
     id: BigInt
 
-    @ApiProperty({type: Store})
     @ManyToOne(() => Store, (store) => store.menu, {nullable: false})
     @JoinColumn([
         { name: "store_id", referencedColumnName: "id" },

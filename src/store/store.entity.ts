@@ -146,10 +146,13 @@ export class Store extends CommonEntity {
     @Column('point')
     @ApiProperty({
         description: '가게 위치 좌표',
+        type: Point,
+        example: "POINT(35.231321,128.233221)"
     })
     @IsString()
     point: Point
 
+    @ApiProperty({ type: Menu })
     @OneToMany(() => Menu, (menu) => menu.store_id)
     menu: Menu
 
