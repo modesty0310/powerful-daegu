@@ -32,6 +32,4 @@ export class QuestionFile extends CommonEntity {
     @IsString()
     @Column()
     url: string
-
-    
 }

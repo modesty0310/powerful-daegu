@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
 import { CommonEntity } from "src/common/entities/common.entity";
 import { Store } from "src/store/store.entity";
 import { User } from "src/users/users.entity";
@@ -31,19 +32,12 @@ export class Talk extends CommonEntity {
     store: Store
 
     @ApiProperty({
-        description: '현장토크 제목',
-        type: String,
-        example: '현장 토크 입니다.'
-    })
-    @Column()
-    title: string
-
-    @ApiProperty({
         description: '현장토크 본문',
         type: String,
         example: '현장토크토크'
     })
     @Column('text')
+    @IsNotEmpty()
     contents: string
 
     @OneToMany(() => TalkLike, (talk_like) => talk_like.talk)
