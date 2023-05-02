@@ -1,11 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { CommonEntity } from "src/common/entities/common.entity";
 import { Store } from "src/store/store.entity";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TalkFiles } from "./talksFiles.entity";
 import { TalkLike } from "./talksLike.entity";
 
 @Entity()
-export class Talk {
+export class Talk extends CommonEntity {
     @ApiProperty({
         description: '현장토크 아이디',
         type: BigInt,
@@ -46,4 +48,7 @@ export class Talk {
 
     @OneToMany(() => TalkLike, (talk_like) => talk_like.talk)
     talk_like: TalkLike
+
+    @OneToMany(() => TalkFiles, (file) => file.talk, {nullable: true, cascade:true})
+    file: TalkFiles
 }
