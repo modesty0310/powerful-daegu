@@ -13,6 +13,7 @@ import { QuestionModule } from './question/question.module';
 import { AnswerModule } from './answer/answer.module';
 import { StoreModule } from './store/store.module';
 import { MapsModule } from './maps/maps.module';
+import { TalksModule } from './talks/talks.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { MapsModule } from './maps/maps.module';
     AnswerModule,
     StoreModule,
     MapsModule,
+    TalksModule,
   ],
 })
 export class AppModule implements NestModule {

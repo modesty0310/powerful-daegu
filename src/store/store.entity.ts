@@ -6,6 +6,7 @@ import { Menu } from "./menu.entity";
 import { StoreType } from "./storeType.entity";
 import { Point } from 'wkx';
 import { StoreLike } from "./storeLike.entity";
+import { Talk } from "src/talks/talks.entity";
 
 @Entity()
 export class Store extends CommonEntity {
@@ -158,4 +159,7 @@ export class Store extends CommonEntity {
 
     @OneToMany(() => StoreLike, (store_like) => store_like.store)
     store_like: StoreLike
+
+    @OneToMany(() => Talk, (talk) => talk.store)
+    talk: Talk
 }
