@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Store } from "src/store/store.entity";
 import { User } from "src/users/users.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TalkLike } from "./talksLike.entity";
 
 @Entity()
 export class Talk {
@@ -42,4 +43,7 @@ export class Talk {
     })
     @Column('text')
     contents: string
+
+    @OneToMany(() => TalkLike, (talk_like) => talk_like.talk)
+    talk_like: TalkLike
 }

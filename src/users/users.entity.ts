@@ -10,6 +10,7 @@ import { Store } from "src/store/store.entity";
 import { StoreDirection } from "src/store/storeDirection.entity";
 import { StoreLike } from "src/store/storeLike.entity";
 import { Talk } from "src/talks/talks.entity";
+import { TalkLike } from "src/talks/talksLike.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 enum UserType {
@@ -131,4 +132,7 @@ export class User extends CommonEntity{
 
     @OneToMany(() => Talk, (talk) => talk.user)
     talk: Talk
+
+    @OneToMany(() => TalkLike, (talk_like) => talk_like.user)
+    talk_like: TalkLike
 }
