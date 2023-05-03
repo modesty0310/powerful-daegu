@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { StoreRepository } from 'src/store/store.repository';
 import { UploadService } from 'src/upload/upload.service';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateTalkDto } from './dto/createTalk.dto';
 import { GetTalkDto } from './dto/getTalk.dto';
+import { UpdateTalkDto } from './dto/updateTalk.dto';
 import { TalksRepository } from './talks.repository';
 
 @Injectable()
@@ -42,5 +43,37 @@ export class TalksService {
         const result = await this.talksRepository.getMyTalk(user);
 
         return result;
+    }
+
+    async updateTalk (dto: UpdateTalkDto, user: CurrentUserDto, files?: Array<Express.Multer.File>) {
+        const talk = await this.talksRepository.getTalkDetail(dto.id);
+        
+        if(!talk) throw new BadRequestException('존재하지 않는 현장 토크 입니다.');
+        
+        if(talk.user.id !== user.sub) throw new UnauthorizedException('자신이 작성한 현장 토크가 아닙니다.');
+
+        const talk_files = await this.talksRepository.getFile(talk.id);
+        
+        if(talk_files) {
+            console.log(talk_files);
+            await Promise.all(talk_files.map( async file => {
+                const key = file.url.split(".amazonaws.com/")[1];
+                console.log(key);
+                
+                await this.uploadService.deleteS3Object(key)
+            }))
+        }
+        
+        await this.talksRepository.deleteFile(talk.id);
+
+        await this.talksRepository.updateTalk(dto);
+
+        if(files) {
+            await Promise.all(files.map( async file => {
+                const {url} = await this.uploadService.uploadFileToS3('talk', file);
+                
+                await this.talksRepository.saveFile(talk.id, url);
+            }))
+        }
     }
 }

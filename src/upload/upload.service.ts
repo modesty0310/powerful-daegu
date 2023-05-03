@@ -25,10 +25,13 @@ export class UploadService {
         s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
         contentType: string;
         url: string
-    }> {        
+    }> {
+        console.log(file);
+        
         try {
             const key = `${folder}/${Date.now()}_${Buffer.from(file.originalname, 'latin1').toString('utf-8')}`.replace(/ /g, '');
-      
+            console.log(key);
+            
             const s3Object = await this.awsS3
             .putObject({
                 Bucket: this.S3_BUCKET_NAME,
@@ -38,7 +41,7 @@ export class UploadService {
                 ContentType: file.mimetype,
             })
             .promise();
-            const url = await this.getUrl(key);
+            const url = decodeURIComponent(await this.getUrl(key));
             return { key, s3Object, contentType: file.mimetype, url };
           } catch (error) {
             throw new BadRequestException(`File upload failed : ${error}`);
@@ -63,7 +66,7 @@ export class UploadService {
         key: string,
         callback?: (err: AWS.AWSError, data: AWS.S3.DeleteObjectOutput) => void,
     ): Promise<{ success: true }> {
-        try {
+        try {            
             await this.awsS3.deleteObject(
                 {
                     Bucket: this.S3_BUCKET_NAME,

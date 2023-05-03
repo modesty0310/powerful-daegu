@@ -4,6 +4,7 @@ import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateTalkDto } from "./dto/createTalk.dto";
 import { GetTalkDto } from "./dto/getTalk.dto";
+import { UpdateTalkDto } from "./dto/updateTalk.dto";
 import { Talk } from "./talks.entity";
 import { TalkFile } from "./talksFile.entity";
 
@@ -48,6 +49,23 @@ export class TalksRepository {
         .execute();
     }
 
+    async deleteFile (talk_id: BigInt) {
+        await this.talksFileRepository.createQueryBuilder('file')
+        .delete()
+        .from(TalkFile)
+        .where('talk_id = :talk_id', {talk_id})
+        .execute()
+    }
+
+    async getFile (talk_id: BigInt) {
+        const result = await this.talksFileRepository.createQueryBuilder('file')
+        .select()
+        .where('file.talk_id = :talk_id', {talk_id})
+        .getMany();
+
+        return result
+    }
+
     async getTalk (dto: GetTalkDto) {
         const { store_id } = dto;
         
@@ -68,5 +86,23 @@ export class TalksRepository {
         .getMany();
 
         return result;
+    }
+
+    async getTalkDetail (talk_id: BigInt) {
+        const result = await this.talksRepository.createQueryBuilder('talk')
+        .leftJoinAndSelect('talk.user', 'user')
+        .leftJoinAndSelect('talk.file', 'file')
+        .where('talk.id = :id', {id: talk_id})
+        .getOne()
+
+        return result;
+    }
+
+    async updateTalk (dto: UpdateTalkDto) {
+        const result = await this.talksRepository.createQueryBuilder('talk')
+        .update(Talk)
+        .set({ contents: dto.contents })
+        .where('id = :id', {id: dto.id})
+        .execute();
     }
 }
