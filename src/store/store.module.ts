@@ -12,6 +12,7 @@ import { StoreType } from './storeType.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Store, Menu, StoreType, StoreLike, StoreDirection])],
   controllers: [StoreController],
-  providers: [StoreService, StoreRepository]
+  providers: [StoreService, StoreRepository],
+  exports: [StoreRepository]
 })
 export class StoreModule {}

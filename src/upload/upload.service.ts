@@ -25,9 +25,7 @@ export class UploadService {
         s3Object: PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>;
         contentType: string;
         url: string
-    }> {
-        console.log(file);
-        
+    }> {        
         try {
             const key = `${folder}/${Date.now()}_${Buffer.from(file.originalname, 'latin1').toString('utf-8')}`.replace(/ /g, '');
       

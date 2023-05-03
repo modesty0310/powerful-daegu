@@ -5,7 +5,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Talk } from "./talks.entity";
 
 @Entity()
-export class TalkFiles extends CommonEntity {
+export class TalkFile extends CommonEntity {
     @ApiProperty({
         description: '파일 아이디',
         type: BigInt,
@@ -20,7 +20,7 @@ export class TalkFiles extends CommonEntity {
     @IsNotEmpty()
     @ManyToOne(() => Talk, (talk) => talk.file, {onDelete: 'CASCADE'})
     @JoinColumn([
-        { name: "talk", referencedColumnName: "id" },
+        { name: "talk_id", referencedColumnName: "id" },
     ])
     talk: Talk
 

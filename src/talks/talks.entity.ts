@@ -4,7 +4,7 @@ import { CommonEntity } from "src/common/entities/common.entity";
 import { Store } from "src/store/store.entity";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TalkFiles } from "./talksFiles.entity";
+import { TalkFile } from "./talksFile.entity";
 import { TalkLike } from "./talksLike.entity";
 
 @Entity()
@@ -43,6 +43,6 @@ export class Talk extends CommonEntity {
     @OneToMany(() => TalkLike, (talk_like) => talk_like.talk)
     talk_like: TalkLike
 
-    @OneToMany(() => TalkFiles, (file) => file.talk, {nullable: true, cascade:true})
-    file: TalkFiles
+    @OneToMany(() => TalkFile, (file) => file.talk, {nullable: true, cascade:true})
+    file: TalkFile
 }

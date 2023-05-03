@@ -3,16 +3,17 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateTalkDto } from "./dto/createTalk.dto";
+import { GetTalkDto } from "./dto/getTalk.dto";
 import { Talk } from "./talks.entity";
-import { TalkFiles } from "./talksFiles.entity";
+import { TalkFile } from "./talksFile.entity";
 
 @Injectable()
 export class TalksRepository {
     constructor(
         @InjectRepository(Talk)
         private readonly talksRepository: Repository<Talk>,
-        @InjectRepository(TalkFiles)
-        private readonly talksFileRepository: Repository<TalkFiles>
+        @InjectRepository(TalkFile)
+        private readonly talksFileRepository: Repository<TalkFile>
     ) {}
 
     async createTalk(dto: CreateTalkDto, user: CurrentUserDto) {
@@ -37,14 +38,26 @@ export class TalksRepository {
     async saveFile (talk_id: BigInt, url: string) {
         const result = await this.talksFileRepository.createQueryBuilder()
         .insert()
-        .into(TalkFiles)
+        .into(TalkFile)
         .values({
             talk: {
                 id: talk_id
             },
             url
         })
-        console.log(result);
+        .execute();
+    }
+
+    async getTalk (dto: GetTalkDto) {
+        const { store_id } = dto;
+        console.log(store_id);
         
+        const result = await this.talksRepository.createQueryBuilder('talk')
+        .leftJoinAndSelect('talk.file', 'file')
+        .leftJoinAndSelect('talk.talk_like', 'talk_like')
+        .where('talk.store_id = :store_id', {store_id})
+        .getMany();
+
+        return result;
     }
 }
