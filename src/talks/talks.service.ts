@@ -5,6 +5,7 @@ import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { CreateTalkDto } from './dto/createTalk.dto';
 import { DeleteTalkDto } from './dto/deleteTalk.dto';
 import { GetTalkDto } from './dto/getTalk.dto';
+import { LikeTalkDto } from './dto/likeTalk.dto';
 import { UpdateTalkDto } from './dto/updateTalk.dto';
 import { Talk } from './talks.entity';
 import { TalksRepository } from './talks.repository';
@@ -61,6 +62,14 @@ export class TalksService {
         await this.deleteTalkFile(talk.id);
 
         await this.talksRepository.deleteTalk(dto);
+    }
+
+    async likeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
+        const talk_like = await this.talksRepository.checkLikeTalk(dto, user);
+
+        if(talk_like) throw new BadRequestException('이미 등록된 좋아요 입니다.');
+
+        await this.talksRepository.likeTalk(dto, user);
     }
 
     async checkMyTalk (id: BigInt, user: CurrentUserDto): Promise<Talk> {

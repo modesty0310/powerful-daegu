@@ -5,9 +5,11 @@ import { Repository } from "typeorm";
 import { CreateTalkDto } from "./dto/createTalk.dto";
 import { DeleteTalkDto } from "./dto/deleteTalk.dto";
 import { GetTalkDto } from "./dto/getTalk.dto";
+import { LikeTalkDto } from "./dto/likeTalk.dto";
 import { UpdateTalkDto } from "./dto/updateTalk.dto";
 import { Talk } from "./talks.entity";
 import { TalkFile } from "./talksFile.entity";
+import { TalkLike } from "./talksLike.entity";
 
 @Injectable()
 export class TalksRepository {
@@ -15,7 +17,9 @@ export class TalksRepository {
         @InjectRepository(Talk)
         private readonly talksRepository: Repository<Talk>,
         @InjectRepository(TalkFile)
-        private readonly talksFileRepository: Repository<TalkFile>
+        private readonly talksFileRepository: Repository<TalkFile>,
+        @InjectRepository(TalkLike)
+        private readonly talksLikeRepository: Repository<TalkLike>
     ) {}
 
     async createTalk(dto: CreateTalkDto, user: CurrentUserDto) {
@@ -71,9 +75,10 @@ export class TalksRepository {
         const { store_id } = dto;
         
         const result = await this.talksRepository.createQueryBuilder('talk')
-        .leftJoinAndSelect('talk.file', 'file')
-        .leftJoinAndSelect('talk.talk_like', 'talk_like')
         .where('talk.store_id = :store_id', {store_id})
+        .leftJoinAndSelect('talk.file', 'file')
+        .leftJoin('talk.talk_like', 'talk_like')
+        .loadRelationCountAndMap('talk.talkLikeCount', 'talk.talk_like')
         .getMany();
 
         return result;
@@ -81,9 +86,10 @@ export class TalksRepository {
 
     async getMyTalk (user: CurrentUserDto) {
         const result = await this.talksRepository.createQueryBuilder('talk')
-        .leftJoinAndSelect('talk.file', 'file')
-        .leftJoinAndSelect('talk.talk_like', 'talk_like')
         .where('talk.user_id = :user_id', {user_id: user.sub})
+        .leftJoinAndSelect('talk.file', 'file')
+        .leftJoin('talk.talk_like', 'talk_like')
+        .loadRelationCountAndMap('talk.talkLikeCount', 'talk.talk_like')
         .getMany();
 
         return result;
@@ -113,5 +119,30 @@ export class TalksRepository {
         .from(Talk)
         .where('id = :id', {id: dto.id})
         .execute();
+    }
+
+    async likeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
+        await this.talksLikeRepository.createQueryBuilder('talk_like')
+        .insert()
+        .into(TalkLike)
+        .values({
+            talk: {
+                id: dto.id
+            },
+            user: {
+                id: user.sub
+            }
+        })
+        .execute()
+    }
+
+    async checkLikeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
+        const result = await this.talksLikeRepository.createQueryBuilder('talk_like')
+        .select()
+        .where('talk_like.user_id = :user_id', {user_id: user.sub})
+        .andWhere('talk_like.talk_id = :talk_id', {talk_id: dto.id})
+        .getOne();
+
+        return result;
     }
 }

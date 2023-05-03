@@ -7,6 +7,7 @@ import { resourceLimits } from 'worker_threads';
 import { CreateTalkDto } from './dto/createTalk.dto';
 import { DeleteTalkDto } from './dto/deleteTalk.dto';
 import { GetTalkDto } from './dto/getTalk.dto';
+import { LikeTalkDto } from './dto/likeTalk.dto';
 import { UpdateTalkDto } from './dto/updateTalk.dto';
 import { TalksService } from './talks.service';
 
@@ -68,6 +69,15 @@ export class TalksController {
         @Body() dto: DeleteTalkDto,
         @CurrentUser() user: CurrentUserDto
     ) {
-        await this.talksService.deleteTalk(dto, user)
+        await this.talksService.deleteTalk(dto, user);
+    }
+
+    @Post('like')
+    @UseGuards(JwtAuthGuard)
+    async likeTalk (
+        @Body() dto: LikeTalkDto,
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        await this.talksService.likeTalk(dto, user);
     }
 }
