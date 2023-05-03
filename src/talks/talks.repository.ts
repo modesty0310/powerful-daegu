@@ -136,6 +136,24 @@ export class TalksRepository {
         .execute()
     }
 
+    async deleteLikeTalk (talk_id: BigInt, user_id?: BigInt) {
+        if(user_id) {
+            await this.talksLikeRepository.createQueryBuilder('talk_like')
+            .delete()
+            .from(TalkLike)
+            .where('talk_like.talk_id = :talk_id', {talk_id})
+            .andWhere('talk_like.user_id = :user_id', {user_id})
+            .execute();
+        }else {
+            await this.talksLikeRepository.createQueryBuilder('talk_like')
+            .delete()
+            .from(TalkLike)
+            .where('talk_like.talk_id = :talk_id', {talk_id})
+            .execute();
+        }
+        
+    }
+
     async checkLikeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
         const result = await this.talksLikeRepository.createQueryBuilder('talk_like')
         .select()

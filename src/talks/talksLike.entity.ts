@@ -18,7 +18,7 @@ export class TalkLike {
     @ApiProperty({
         type: () => Talk
     })
-    @ManyToOne(() => Talk, (talk) => talk.talk_like, {nullable: false})
+    @ManyToOne(() => Talk, (talk) => talk.talk_like, {nullable: false, onDelete: 'CASCADE'})
     @JoinColumn({name: 'talk_id'})
     talk: Talk
 }

@@ -40,7 +40,7 @@ export class Talk extends CommonEntity {
     @IsNotEmpty()
     contents: string
 
-    @OneToMany(() => TalkLike, (talk_like) => talk_like.talk)
+    @OneToMany(() => TalkLike, (talk_like) => talk_like.talk, {nullable: true, cascade:true})
     talk_like: TalkLike[]
 
     @OneToMany(() => TalkFile, (file) => file.talk, {nullable: true, cascade:true})

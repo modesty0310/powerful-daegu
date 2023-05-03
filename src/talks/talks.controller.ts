@@ -80,4 +80,13 @@ export class TalksController {
     ) {
         await this.talksService.likeTalk(dto, user);
     }
+
+    @Delete('like')
+    @UseGuards(JwtAuthGuard)
+    async deleteLikeTalk (
+        @Body() dto: LikeTalkDto,
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        await this.talksService.deleteLikeTalk(dto, user);
+    }
 }
