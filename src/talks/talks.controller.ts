@@ -1,10 +1,11 @@
-import { Body, Controller, Get, ParseFilePipeBuilder, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseFilePipeBuilder, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
 import { resourceLimits } from 'worker_threads';
 import { CreateTalkDto } from './dto/createTalk.dto';
+import { DeleteTalkDto } from './dto/deleteTalk.dto';
 import { GetTalkDto } from './dto/getTalk.dto';
 import { UpdateTalkDto } from './dto/updateTalk.dto';
 import { TalksService } from './talks.service';
@@ -59,5 +60,14 @@ export class TalksController {
         ) files?: Array<Express.Multer.File>,
     ) {
         await this.talksService.updateTalk(dto, user, files);
+    }
+
+    @Delete()
+    @UseGuards(JwtAuthGuard)
+    async deleteTalk (
+        @Body() dto: DeleteTalkDto,
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        await this.talksService.deleteTalk(dto, user)
     }
 }

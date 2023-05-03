@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CurrentUserDto } from "src/users/dto/currentUser.dto";
 import { Repository } from "typeorm";
 import { CreateTalkDto } from "./dto/createTalk.dto";
+import { DeleteTalkDto } from "./dto/deleteTalk.dto";
 import { GetTalkDto } from "./dto/getTalk.dto";
 import { UpdateTalkDto } from "./dto/updateTalk.dto";
 import { Talk } from "./talks.entity";
@@ -102,6 +103,14 @@ export class TalksRepository {
         const result = await this.talksRepository.createQueryBuilder('talk')
         .update(Talk)
         .set({ contents: dto.contents })
+        .where('id = :id', {id: dto.id})
+        .execute();
+    }
+
+    async deleteTalk (dto: DeleteTalkDto) {
+        await this.talksRepository.createQueryBuilder('talk')
+        .delete()
+        .from(Talk)
         .where('id = :id', {id: dto.id})
         .execute();
     }
