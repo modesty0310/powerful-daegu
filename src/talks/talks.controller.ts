@@ -34,4 +34,14 @@ export class TalksController {
         const result = await this.talksService.getTalk(dto);
         return result;
     }
+
+    @Get('my')
+    @UseGuards(JwtAuthGuard)
+    async getMyTalk(
+        @CurrentUser() user: CurrentUserDto
+    ) {
+        const result = await this.talksService.getMyTalk(user);
+
+        return result
+    }
 }

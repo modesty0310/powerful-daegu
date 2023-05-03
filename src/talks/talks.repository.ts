@@ -50,12 +50,21 @@ export class TalksRepository {
 
     async getTalk (dto: GetTalkDto) {
         const { store_id } = dto;
-        console.log(store_id);
         
         const result = await this.talksRepository.createQueryBuilder('talk')
         .leftJoinAndSelect('talk.file', 'file')
         .leftJoinAndSelect('talk.talk_like', 'talk_like')
         .where('talk.store_id = :store_id', {store_id})
+        .getMany();
+
+        return result;
+    }
+
+    async getMyTalk (user: CurrentUserDto) {
+        const result = await this.talksRepository.createQueryBuilder('talk')
+        .leftJoinAndSelect('talk.file', 'file')
+        .leftJoinAndSelect('talk.talk_like', 'talk_like')
+        .where('talk.user_id = :user_id', {user_id: user.sub})
         .getMany();
 
         return result;

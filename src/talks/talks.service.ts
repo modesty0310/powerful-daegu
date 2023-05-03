@@ -32,11 +32,15 @@ export class TalksService {
     }
 
     async getTalk (dto: GetTalkDto) {
-        console.log(dto);
-        
         const result = await this.talksRepository.getTalk(dto);
-        console.log(result);
+
         return result;
     }
-    
+
+
+    async getMyTalk (user: CurrentUserDto) {
+        const result = await this.talksRepository.getMyTalk(user);
+
+        return result;
+    }
 }
