@@ -6,7 +6,6 @@ import { CommonEntity } from "src/common/entities/common.entity";
 import { Faq } from "src/faq/faq.entity";
 import { Notice } from "src/notice/notice.entity";
 import { Question } from "src/question/question.entity";
-import { Store } from "src/store/store.entity";
 import { StoreDirection } from "src/store/storeDirection.entity";
 import { StoreLike } from "src/store/storeLike.entity";
 import { Talk } from "src/talks/talks.entity";
