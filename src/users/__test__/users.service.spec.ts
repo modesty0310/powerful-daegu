@@ -1,5 +1,8 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EmailService } from 'src/email/email.service';
+import { UploadService } from 'src/upload/upload.service';
 import { UsersRepository } from '../users.repository';
 import { UsersService } from '../users.service';
 
@@ -9,7 +12,8 @@ class MockRepository {
   ]
 
   existsByEmail(email: string) {
-    const users = this.DB.filter(el => el.email === email);
+    const users = this.DB.filter(el => el.email === email);    
+    
     if(users.length) return users[0];
     return null
   }
@@ -18,6 +22,14 @@ class MockRepository {
     this.DB.push({email, nickname, password, term, user_type});
     return {email, nickname, password, term, user_type}
   }
+
+}
+
+class MockMailService {
+
+}
+
+class MockUploadService {
 
 }
 
@@ -38,7 +50,15 @@ describe('UsersService', () => {
         {
           provide: UsersRepository,
           useClass: MockRepository
-        }
+        },
+        {
+          provide: EmailService,
+          useClass: MockMailService
+        },
+        {
+          provide:UploadService,
+          useClass: MockUploadService
+        },
       ],
     }).compile();
 
@@ -48,15 +68,16 @@ describe('UsersService', () => {
   describe('유저 생성하기', () => {
     it('이메일이 존재 하는 경우', async () => {
       try {
-        service.createUser({email: 'a@a.com', nickname: 'aaaa', password: '1234', term: true, user_type: UserType.origin})
+        await service.createUser({email: 'a@a.com', nickname: 'aaaa', password: '1234', term: true, user_type: UserType.origin});
       } catch (error) {
         expect(error).toBeInstanceOf(UnauthorizedException);
       }
     });
 
     it('회원 등록 확인', async () => {
-      const result = await service.createUser({email: 'a@a.com', nickname: 'aaaa', password: '1234', term: true, user_type: UserType.origin})
-      expect(result).toStrictEqual({email: 'a@a.com', nickname: 'aaaa', password: '1234', term: true, user_type: UserType.origin})
+      const {password, ...result} = await service.createUser({email: 'b@b.com', nickname: 'bbbb', password: '1234', term: true, user_type: UserType.origin});
+      expect(result).toStrictEqual({email: 'b@b.com', nickname: 'bbbb', term: true, user_type: UserType.origin});
     })
+
   })
 });

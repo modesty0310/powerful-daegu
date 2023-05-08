@@ -24,7 +24,7 @@ export class UsersService {
     async createUser(dto: CreateUserDto): Promise<User> {
         const {email, nickname, password, term, user_type} = dto;
         const existEmail = await this.usersRepository.existsByEmail(dto.email); // 이메일이 이미 존재하는지 확인
-
+        
         if (existEmail) { // 이미 존재하는 경우 예외 처리
             throw new UnauthorizedException('해당하는 이메일은 이미 존재합니다.');
         }
