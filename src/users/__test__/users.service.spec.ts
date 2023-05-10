@@ -26,7 +26,9 @@ class MockRepository {
 }
 
 class MockMailService {
-
+  sendAuthCode(email: string, code: string) {
+    return;
+  }
 }
 
 class MockUploadService {
@@ -78,6 +80,21 @@ describe('UsersService', () => {
       const {password, ...result} = await service.createUser({email: 'b@b.com', nickname: 'bbbb', password: '1234', term: true, user_type: UserType.origin});
       expect(result).toStrictEqual({email: 'b@b.com', nickname: 'bbbb', term: true, user_type: UserType.origin});
     })
+  })
 
+  describe('이메일 인증 코드 생성', () => {
+    it('이메일이 존재 하는 경우', async () => {
+      try {
+        await service.createAuthCode({email: 'a@a.com'});
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+      }
+    });
+
+    it('코드 생성 확인', async () => {
+      const {code, ...result} = await service.createAuthCode({email: 'c@c.com'});
+      expect(code).toHaveLength(6);
+      expect(result).toStrictEqual({text: '작성한 이메일로 인증 코드를 보냈습니다.', success: true})
+    })
   })
 });

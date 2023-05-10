@@ -22,7 +22,7 @@ export class TalksRepository {
         private readonly talksLikeRepository: Repository<TalkLike>
     ) {}
 
-    async createTalk(dto: CreateTalkDto, user: CurrentUserDto) {
+    async createTalk(dto: CreateTalkDto, user: CurrentUserDto): Promise<BigInt> {
         const { contents, store_id } = dto;
         const result = await this.talksRepository.createQueryBuilder()
         .insert()
@@ -41,7 +41,7 @@ export class TalksRepository {
         return result.identifiers[0].id;
     }
 
-    async saveFile (talk_id: BigInt, url: string) {
+    async saveFile (talk_id: BigInt, url: string): Promise<void> {
         const result = await this.talksFileRepository.createQueryBuilder()
         .insert()
         .into(TalkFile)
@@ -54,7 +54,7 @@ export class TalksRepository {
         .execute();
     }
 
-    async deleteFile (talk_id: BigInt) {
+    async deleteFile (talk_id: BigInt): Promise<void> {
         await this.talksFileRepository.createQueryBuilder('file')
         .delete()
         .from(TalkFile)
@@ -71,7 +71,7 @@ export class TalksRepository {
         return result
     }
 
-    async getTalk (dto: GetTalkDto) {
+    async getTalk (dto: GetTalkDto): Promise<Talk[]> {
         const { store_id } = dto;
         
         const result = await this.talksRepository.createQueryBuilder('talk')
@@ -84,7 +84,7 @@ export class TalksRepository {
         return result;
     }
 
-    async getMyTalk (user: CurrentUserDto) {
+    async getMyTalk (user: CurrentUserDto): Promise<Talk[]> {
         const result = await this.talksRepository.createQueryBuilder('talk')
         .where('talk.user_id = :user_id', {user_id: user.sub})
         .leftJoinAndSelect('talk.file', 'file')
@@ -105,7 +105,7 @@ export class TalksRepository {
         return result;
     }
 
-    async updateTalk (dto: UpdateTalkDto) {
+    async updateTalk (dto: UpdateTalkDto): Promise<void> {
         const result = await this.talksRepository.createQueryBuilder('talk')
         .update(Talk)
         .set({ contents: dto.contents })
@@ -113,7 +113,7 @@ export class TalksRepository {
         .execute();
     }
 
-    async deleteTalk (dto: DeleteTalkDto) {
+    async deleteTalk (dto: DeleteTalkDto): Promise<void> {
         await this.talksRepository.createQueryBuilder('talk')
         .delete()
         .from(Talk)
@@ -121,7 +121,7 @@ export class TalksRepository {
         .execute();
     }
 
-    async likeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
+    async likeTalk (dto: LikeTalkDto, user: CurrentUserDto): Promise<void> {
         await this.talksLikeRepository.createQueryBuilder('talk_like')
         .insert()
         .into(TalkLike)
@@ -136,7 +136,7 @@ export class TalksRepository {
         .execute()
     }
 
-    async deleteLikeTalk (talk_id: BigInt, user_id?: BigInt) {
+    async deleteLikeTalk (talk_id: BigInt, user_id?: BigInt): Promise<void> {
         if(user_id) {
             await this.talksLikeRepository.createQueryBuilder('talk_like')
             .delete()
@@ -154,7 +154,7 @@ export class TalksRepository {
         
     }
 
-    async checkLikeTalk (dto: LikeTalkDto, user: CurrentUserDto) {
+    async checkLikeTalk (dto: LikeTalkDto, user: CurrentUserDto): Promise<TalkLike> {
         const result = await this.talksLikeRepository.createQueryBuilder('talk_like')
         .select()
         .where('talk_like.user_id = :user_id', {user_id: user.sub})

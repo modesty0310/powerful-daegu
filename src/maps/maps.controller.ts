@@ -1,8 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
-import { GetDirectionsDto } from './dto/getDirections.dto';
 import { MapsService } from './maps.service';
 
+@ApiTags('maps')
 @Controller('maps')
 export class MapsController {
     constructor(

@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, ParseFilePipeBuilder, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
 import { CurrentUserDto } from 'src/users/dto/currentUser.dto';
@@ -11,6 +12,7 @@ import { LikeTalkDto } from './dto/likeTalk.dto';
 import { UpdateTalkDto } from './dto/updateTalk.dto';
 import { TalksService } from './talks.service';
 
+@ApiTags('talks')
 @Controller('talks')
 export class TalksController {
     constructor(private readonly talksService: TalksService){}
