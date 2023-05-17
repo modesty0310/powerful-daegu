@@ -97,4 +97,14 @@ describe('UsersService', () => {
       expect(result).toStrictEqual({text: '작성한 이메일로 인증 코드를 보냈습니다.', success: true})
     })
   })
+
+  describe('비밀 번호 변경', () => {
+    it('비밀 번호가 일치 하지 않을 경우', async () => {
+      try {
+        await service.changePassword({email: })
+      } catch (error) {
+        
+      }
+    })
+  })
 });
