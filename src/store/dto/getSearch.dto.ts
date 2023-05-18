@@ -24,7 +24,9 @@ export enum Place {
 export class GetSearchDto {
     @ApiProperty({
         description: '지역 정보',
-        example: '수성구'
+        example: '수성구',
+        nullable: true,
+        required: false
     })
     @IsEnum(Region)
     @IsOptional()
@@ -33,7 +35,9 @@ export class GetSearchDto {
     @ApiProperty({
         description: '가게 이름',
         type: String,
-        example: '세븐'
+        example: '세븐',
+        nullable: true,
+        required: false
     })
     @IsString()
     @IsOptional()
