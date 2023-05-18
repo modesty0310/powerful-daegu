@@ -23,47 +23,12 @@ export enum Place {
 
 export class GetSearchDto {
     @ApiProperty({
-        description: '위도',
-        type: String,
-        example: '34.123123'
-    })
-    @IsString()
-    @IsOptional()
-    lat: string 
-    
-    @ApiProperty({
-        description: '경도',
-        type: String,
-        example: '128.123123'
-    })
-    @IsString()
-    @IsOptional()
-    lan: string
-    
-    @ApiProperty({
-        description: '거리 범위',
-        type: String,
-        example: '2'
-    })
-    @IsString()
-    @IsOptional()
-    distance: string
-    
-    @ApiProperty({
         description: '지역 정보',
         example: '수성구'
     })
     @IsEnum(Region)
     @IsOptional()
-    region: Region
-
-    @ApiProperty({
-        description: '장소 정보',
-        example: '음식점'
-    })
-    @IsEnum(Place)
-    @IsOptional()
-    place: Place
+    region?: Region
 
     @ApiProperty({
         description: '가게 이름',
@@ -72,5 +37,5 @@ export class GetSearchDto {
     })
     @IsString()
     @IsOptional()
-    storename: string
+    storename?: string
 }
