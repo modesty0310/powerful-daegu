@@ -39,10 +39,17 @@ export class StoreRepository {
             })
         }
 
+        const storeCategory = dto.place;
+        let storeCategorys = ['치킨/찜닭', '중식', '한식', '찜/탕', '피자', '족발/보쌈', '패스트푸드', '돈까스/일식', '도시락/죽', '카페/디저트', '아시안/양식', '반찬/신선', '편의점'];
+        if(storeCategory) {
+            storeCategorys = storeCategory.split(',');
+        }
+
         const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
         .andWhere('store.city_name IN (:city_name)', {city_name: regionNames})
+        .andWhere('store_type.category IN (:category)', {category: storeCategorys})
         .getMany()
 
         return result;        
