@@ -31,10 +31,13 @@ export class StoreRepository {
 
     async getSerchStore(dto: GetSearchDto) {
         const storeRegion = dto.region;
-        const regionNames = storeRegion.split(',');
-        regionNames.forEach((name, idx) => {
-            regionNames[idx] = '대구 ' + name
-        })
+        let regionNames = ['대구 중구', '대구 달성군', '대구 북구', '대구 수성구', '대구 달서구', '대구 동구', '대구 남구', '대구 서구'];
+        if(storeRegion) {
+            regionNames = storeRegion.split(',');
+            regionNames.forEach((name, idx) => {
+                regionNames[idx] = '대구 ' + name
+            })
+        }
 
         const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
