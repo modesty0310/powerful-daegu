@@ -35,8 +35,7 @@ export class StoreRepository {
         regionNames.forEach((name, idx) => {
             regionNames[idx] = '대구 ' + name
         })
-        console.log(regionNames);
-        
+
         const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
