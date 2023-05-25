@@ -30,10 +30,17 @@ export class StoreRepository {
     }
 
     async getSerchStore(dto: GetSearchDto) {
+        const storeRegion = dto.region;
+        const regionNames = storeRegion.split(',');
+        regionNames.forEach((name, idx) => {
+            regionNames[idx] = '대구 ' + name
+        })
+        console.log(regionNames);
+        
         const result = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
-        .andWhere('store.city_name like :city_name', {city_name: `%${dto.region ?? ''}%`})
+        .andWhere('store.city_name IN (:city_name)', {city_name: regionNames})
         .getMany()
 
         return result;        

@@ -25,6 +25,8 @@ export class StoreController {
     async getSearchStore(
         @Query() query: GetSearchDto
     ) {
+        console.log(query);
+        
         return await this.storeService.getSearchStore(query);
     }
 

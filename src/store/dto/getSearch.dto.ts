@@ -28,9 +28,8 @@ export class GetSearchDto {
         nullable: true,
         required: false
     })
-    @IsEnum(Region)
     @IsOptional()
-    region?: Region
+    region?: string
 
     @ApiProperty({
         description: '가게 이름',
