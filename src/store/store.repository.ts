@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/users/users.entity";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
 import { Store } from "./store.entity";
@@ -29,7 +30,7 @@ export class StoreRepository {
         return result;
     }
 
-    async getSerchStore(dto: GetSearchDto) {
+    async getSerchStore(dto: GetSearchDto, user: User | undefined) {
         const storeRegion = dto.region;
         let regionNames = ['대구 중구', '대구 달성군', '대구 북구', '대구 수성구', '대구 달서구', '대구 동구', '대구 남구', '대구 서구'];
         if(storeRegion) {
@@ -45,14 +46,33 @@ export class StoreRepository {
             storeCategorys = storeCategory.split(',');
         }
 
-        const result = await this.storeRepository.createQueryBuilder('store')
+        let like: Store[] | [];
+
+        if(user) {
+            like = await this.storeRepository.createQueryBuilder('store')
+            .leftJoinAndSelect('store.store_type', 'store_type')
+            .leftJoinAndSelect('store.store_like', 'store_like')
+            .leftJoinAndSelect('store_like.user', 'user')
+            .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
+            .andWhere('user.id = :id', {id: user.id})
+            .andWhere('store.city_name IN (:city_name)', {city_name: regionNames})
+            .andWhere('store_type.category IN (:category)', {category: storeCategorys})
+            .select(['store', 'store_type'])
+            .getMany();      
+        }else {
+            like = [];
+        }
+        
+
+
+        const stores = await this.storeRepository.createQueryBuilder('store')
         .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store.name like :name', {name: `%${dto.storename ?? ''}%`})
         .andWhere('store.city_name IN (:city_name)', {city_name: regionNames})
         .andWhere('store_type.category IN (:category)', {category: storeCategorys})
         .getMany()
 
-        return result;        
+        return {like, stores};        
     }
 
     async getAllStore() {

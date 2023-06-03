@@ -1,21 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { last } from 'rxjs';
-import { Like } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { User } from 'src/users/users.entity';
+import { UsersRepository } from 'src/users/users.repository';
 import { GetSearchDto } from './dto/getSearch.dto';
 import { StoreRepository } from './store.repository';
 
 @Injectable()
 export class StoreService {
     constructor(
-        private readonly storeRepository: StoreRepository
+        private readonly storeRepository: StoreRepository,
+        private readonly jwtService: JwtService,
+        private readonly userRepository: UsersRepository,
     ){}
 
     async getStoreDetail(id: BigInt) {
         return this.storeRepository.getStoreDetail(id);
     }
 
-    async getSearchStore(dto: GetSearchDto) {
-        return await this.storeRepository.getSerchStore(dto);
+    async getSearchStore(dto: GetSearchDto, req: Request) {
+        let payload: any;
+        if(req.cookies['access_token']) payload = await this.jwtService.verifyAsync(req.cookies['access_token'])
+        let user: User | undefined;
+        if(payload) {
+            user = await this.userRepository.getUser(payload.sub);
+        }
+        
+        return await this.storeRepository.getSerchStore(dto, user);
     }
 
     async getAllStore() {

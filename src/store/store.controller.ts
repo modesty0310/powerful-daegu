@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags, OmitType } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/user.decorator';
@@ -11,6 +11,8 @@ import { SetDirectionDto } from './dto/setDirection.dto';
 import { DeleteDirectionDto } from './dto/deleteDirection.dto';
 import { Store } from './store.entity';
 import { StoreDirection } from './storeDirection.entity';
+import { Request } from 'express';
+import { SearchStoreResDto } from './dto/searchStoreRes.dto';
 
 @Controller('store')
 @ApiTags('Store')
@@ -21,13 +23,14 @@ export class StoreController {
 
     @Get('/search')
     @ApiOperation({ summary: '가게 검색하기'})
-    @ApiResponse({status: 200, description: '성공', type: OmitType(Store, ['menu'])})
+    @ApiResponse({status: 200, description: '성공', type: SearchStoreResDto})
     async getSearchStore(
-        @Query() query: GetSearchDto
+        @Query() query: GetSearchDto,
+        @Req() req: Request
     ) {
         console.log(query);
         
-        return await this.storeService.getSearchStore(query);
+        return await this.storeService.getSearchStore(query, req);
     }
 
     @Get('/all')
