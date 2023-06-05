@@ -29,8 +29,15 @@ export class StoreService {
         return await this.storeRepository.getSerchStore(dto, user);
     }
 
-    async getAllStore() {
-        return await this.storeRepository.getAllStore();
+    async getAllStore(req: Request) {
+        let payload: any;
+        if(req.cookies['access_token']) payload = await this.jwtService.verifyAsync(req.cookies['access_token'])
+        let user: User | undefined;
+        if(payload) {
+            user = await this.userRepository.getUser(payload.sub);
+        }
+
+        return await this.storeRepository.getAllStore(user);
     }
 
     async setStoreLike(store_id: BigInt, user_id: BigInt) {

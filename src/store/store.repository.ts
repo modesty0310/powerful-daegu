@@ -75,12 +75,44 @@ export class StoreRepository {
         return {like, stores};        
     }
 
-    async getAllStore() {
-        const result = await this.storeRepository.createQueryBuilder('store')
-        .leftJoinAndSelect('store.store_type', 'store_type')
-        .getMany();
+    async getAllStore(user: User | undefined) {
+        let like: Store[];
+        let stores: Store[];
+        console.log(user);
+        
+        if(user) {
+            like = await this.storeRepository.createQueryBuilder('store')
+            .leftJoinAndSelect('store.store_type', 'store_type')
+            .leftJoinAndSelect('store.store_like', 'store_like')
+            .leftJoinAndSelect('store_like.user', 'user')
+            .where('user.id = :id', {id: user.id})
+            .select(['store', 'store_type'])
+            .getMany();
 
-        return result;
+            const ids = [];
+            for(const el of like) {
+                ids.push(el.id);
+            }
+
+            stores = await this.storeRepository.createQueryBuilder('store')
+            .leftJoinAndSelect('store.store_type', 'store_type')
+            .leftJoinAndSelect('store.store_like', 'store_like')
+            .leftJoinAndSelect('store_like.user', 'user')
+            .where('store.id NOT IN (:id)', {id: ids})
+            .select(['store', 'store_type',])
+            .getMany();
+        }else {
+            like = [];
+
+            stores = await this.storeRepository.createQueryBuilder('store')
+            .leftJoinAndSelect('store.store_type', 'store_type')
+            .leftJoinAndSelect('store.store_like', 'store_like')
+            .leftJoinAndSelect('store_like.user', 'user')
+            .select(['store', 'store_type'])
+            .getMany();
+        }
+
+        return {like, stores};
     }
 
     async setStoreLike(store_id: BigInt, user_id: BigInt) {

@@ -35,9 +35,11 @@ export class StoreController {
 
     @Get('/all')
     @ApiOperation({ summary: '모든 가게 가져오기'})
-    @ApiResponse({status: 200, description: '성공', type: [OmitType(Store, ['menu'])]})
-    async getAllStore() {
-        return await this.storeService.getAllStore()
+    @ApiResponse({status: 200, description: '성공', type: SearchStoreResDto})
+    async getAllStore(
+        @Req() req: Request
+    ) {
+        return await this.storeService.getAllStore(req)
     }
 
     @Post('/like')
