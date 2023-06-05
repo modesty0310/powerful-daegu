@@ -94,13 +94,24 @@ export class StoreRepository {
                 ids.push(el.id);
             }
 
-            stores = await this.storeRepository.createQueryBuilder('store')
-            .leftJoinAndSelect('store.store_type', 'store_type')
-            .leftJoinAndSelect('store.store_like', 'store_like')
-            .leftJoinAndSelect('store_like.user', 'user')
-            .where('store.id NOT IN (:id)', {id: ids})
-            .select(['store', 'store_type',])
-            .getMany();
+            if(ids.length) {
+                stores = await this.storeRepository.createQueryBuilder('store')
+                .leftJoinAndSelect('store.store_type', 'store_type')
+                .leftJoinAndSelect('store.store_like', 'store_like')
+                .leftJoinAndSelect('store_like.user', 'user')
+                .where('store.id NOT IN (:id)', {id: ids})
+                .select(['store', 'store_type',])
+                .getMany();
+            }else {
+                stores = await this.storeRepository.createQueryBuilder('store')
+                .leftJoinAndSelect('store.store_type', 'store_type')
+                .leftJoinAndSelect('store.store_like', 'store_like')
+                .leftJoinAndSelect('store_like.user', 'user')
+                .select(['store', 'store_type',])
+                .getMany();
+            }
+
+            
         }else {
             like = [];
 
