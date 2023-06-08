@@ -62,7 +62,7 @@ export class StoreController {
         @Body() dto: DeleteStoreLikeDto,
         @CurrentUser() user: CurrentUserDto, 
     ) {
-        await this.storeService.deleteStoreLike(dto.id, user.sub)
+        await this.storeService.deleteStoreLike(dto.id, user.sub);
         return
     }
 
@@ -73,7 +73,7 @@ export class StoreController {
     async getAllStoreLike(
         @CurrentUser() user: CurrentUserDto, 
     ) {
-        return await this.storeService.getAllStoreLike(user.sub)
+        return await this.storeService.getAllStoreLike(user.sub);
     }
 
     @Post('/direction')

@@ -41,7 +41,7 @@ async function bootstrap() {
 
   
   app.enableCors({
-    origin: 'https://deats.ejrwnd.com',
+    origin: 'http://localhost:3000',
     credentials: true,
   });
   app.use(cookieParser());

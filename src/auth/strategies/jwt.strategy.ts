@@ -7,7 +7,9 @@ import { Strategy } from "passport-jwt";
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor() {
         super({
-            jwtFromRequest: (req: Request) => {                
+            jwtFromRequest: (req: Request) => {  
+                console.log(req.cookies);
+                              
                 return req.cookies['access_token'];
             },
             secretOrKey: process.env.JWT_SECRET,

@@ -1,4 +1,4 @@
 import { PickType } from "@nestjs/swagger";
-import { StoreLike } from "../storeLike.entity";
+import { Store } from "../store.entity";
 
-export class DeleteStoreLikeDto extends PickType(StoreLike, ['id']) {}
+export class DeleteStoreLikeDto extends PickType(Store, ['id']) {}

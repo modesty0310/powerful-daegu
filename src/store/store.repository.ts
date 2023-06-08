@@ -145,20 +145,20 @@ export class StoreRepository {
         .execute()        
     }
 
-    async deleteStoreLike(store_like_id: BigInt, user_id: BigInt) {
+    async deleteStoreLike(store_id: BigInt, user_id: BigInt) {
         const store_like = await this.storeLikeRepository.createQueryBuilder('store_like')
         .leftJoinAndSelect('store_like.user', 'user')
-        .where('store_like.id = :store_like_id', {store_like_id})
+        .leftJoinAndSelect('store_like.store', 'store')
+        .where('store.id = :store_id', {store_id})
+        .andWhere('user.id = :user_id', {user_id})
         .getOne()
 
         if(!store_like) throw new BadRequestException('좋아요가 존재하지 않습니다.')
 
-        if(store_like && store_like.user.id !== user_id) throw new UnauthorizedException('권한이 없습니다.')
-
         const result = await this.storeLikeRepository.createQueryBuilder()
         .delete()
         .from(StoreLike)
-        .where('id = :id', {id: store_like_id})
+        .where('id = :id', {id: store_like.id})
         .execute()
         console.log(result);
         
@@ -167,6 +167,7 @@ export class StoreRepository {
     async getAllStoreLike(user_id: BigInt) {
         const result = await this.storeLikeRepository.createQueryBuilder('store_like')
         .leftJoinAndSelect('store_like.store', 'store')
+        .leftJoinAndSelect('store.store_type', 'store_type')
         .where('store_like.user = :user_id', {user_id})
         .getMany()
 
