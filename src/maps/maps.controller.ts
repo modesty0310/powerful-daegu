@@ -19,13 +19,13 @@ export class MapsController {
         const {start, goal} = query;
         const opt = {
             url: `https://map.naver.com/v5/api/transit/directions/point-to-point?start=${start}&goal=${goal}&mode=TIME&lang=ko&includeDetailOperation=true`,
-            method: "post",
+            method: "get",
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }
 
         const result = await axios(opt)
-            .then(function a(response) {
+            .then(function (response) {
                 console.log("response =", response)
                 return response.data
                 // // 맵 목적지 설정
@@ -47,16 +47,16 @@ export class MapsController {
         @Query() query: GetDirectionsDto
     ) {
         const {start, goal} = query;
+        console.log(query);
+        
         const opt = {
-            url: `https://map.naver.com/v5/api/dir/findcar?start=${start}&goal=${goal}&respversion=4&rptype=4&mainoption=traoptimal,avoidhipassonly:traoptimal,multiroute,avoidhipassonly:traoptimal,avoidtoll,avoidhipassonly:traoptdist,avoidhipassonly`,
-            method: "post",
-            contentType: "application/json; charset=utf-8",
+            url: `https://map.naver.com/v5/api/dir/findcar?start=${start}&goal=${goal}output=pbf&crs=EPSG:4326&rptype=4&cartype=1&fueltype=1&mileage=11.4&waypoints=&respversion=4&mainoption=traoptimal,avoidhipassonly:traoptimal,multiroute,avoidhipassonly:traoptimal,avoidtoll,avoidhipassonly:traoptdist,avoidhipassonly&lang=ko`,
+            method: "get",
             dataType: "json"
         }
 
         const result = await axios(opt)
-            .then(function a(response) {
-                console.log("response =", response)
+            .then(function (response) {
                 return response.data
                 // // 맵 목적지 설정
                 // dispatch(mapActions.handleDestination({data : e.target.value}))
@@ -65,7 +65,6 @@ export class MapsController {
                 // dispatch(mapActions.handleSearch({data : response.data.paths.length !== 0 ? response.data.paths : response.data.staticPaths}))
             })
             .catch(function (error) {
-                console.log(error);
                 return error
             });
             return result
@@ -79,14 +78,13 @@ export class MapsController {
         const {start, goal} = query;
         const opt = {
             url: `https://map.naver.com/v5/api/dir/findwalk?lo=ko&st=1&o=all&l=${start};${goal}&lang=ko`,
-            method: "post",
-            contentType: "application/json; charset=utf-8",
+            method: "get",
             dataType: "json"
         }
 
         const result = await axios(opt)
-            .then(function a(response) {
-                console.log("response =", response)
+            .then(function (response) {
+                console.log("response =", response.data)
                 return response.data
                 // // 맵 목적지 설정
                 // dispatch(mapActions.handleDestination({data : e.target.value}))
