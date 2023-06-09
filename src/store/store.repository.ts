@@ -145,20 +145,29 @@ export class StoreRepository {
         .execute()        
     }
 
-    async deleteStoreLike(store_id: BigInt, user_id: BigInt) {
+    async deleteStoreLike(store_id: BigInt[], user_id: BigInt) {
         const store_like = await this.storeLikeRepository.createQueryBuilder('store_like')
         .leftJoinAndSelect('store_like.user', 'user')
         .leftJoinAndSelect('store_like.store', 'store')
-        .where('store.id = :store_id', {store_id})
+        .where('store.id IN (:store_id)', {store_id})
         .andWhere('user.id = :user_id', {user_id})
-        .getOne()
+        .getMany();
 
-        if(!store_like) throw new BadRequestException('좋아요가 존재하지 않습니다.')
+        if(store_like.length === 0) throw new BadRequestException('좋아요가 존재하지 않습니다.')
+        
+        const ids:BigInt[] = [];
+
+        for(const like of store_like) {
+            ids.push(like.id);
+        }
+
+        console.log(111111, ids);
+        
 
         const result = await this.storeLikeRepository.createQueryBuilder()
         .delete()
         .from(StoreLike)
-        .where('id = :id', {id: store_like.id})
+        .where('id IN (:id)', {id: ids})
         .execute()
         console.log(result);
         
