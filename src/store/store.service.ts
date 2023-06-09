@@ -56,7 +56,7 @@ export class StoreService {
         await this.storeRepository.setDirection(url, user_id);
     }
 
-    async deleteDirection(direction_id: BigInt, user_id: BigInt) {
+    async deleteDirection(direction_id: BigInt[], user_id: BigInt) {
         await this.storeRepository.deleteDirection(direction_id, user_id);
     }
 

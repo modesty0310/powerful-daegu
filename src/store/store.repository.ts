@@ -161,9 +161,6 @@ export class StoreRepository {
             ids.push(like.id);
         }
 
-        console.log(111111, ids);
-        
-
         const result = await this.storeLikeRepository.createQueryBuilder()
         .delete()
         .from(StoreLike)
@@ -204,20 +201,25 @@ export class StoreRepository {
         .execute()        
     }
 
-    async deleteDirection(direction_id: BigInt, user_id: BigInt) {
-        const direction = await this.directionRepository.createQueryBuilder('direction')
+    async deleteDirection(direction_id: BigInt[], user_id: BigInt) {
+        const directions = await this.directionRepository.createQueryBuilder('direction')
         .leftJoinAndSelect('direction.user', 'user')
-        .where('direction.id = :direction_id', {direction_id})
-        .getOne()
+        .where('direction.id IN (:direction_id)', {direction_id})
+        .andWhere('user.id = :user_id', {user_id})
+        .getMany()
 
-        if(!direction) throw new BadRequestException('좋아요가 존재하지 않습니다.')
+        if(directions.length === 0) throw new BadRequestException('좋아요가 존재하지 않습니다.')
 
-        if(direction && direction.user.id !== user_id) throw new UnauthorizedException('권한이 없습니다.')
+        const ids:BigInt[] = [];
+
+        for(const direction of directions) {
+            ids.push(direction.id);
+        }
 
         const result = await this.directionRepository.createQueryBuilder()
         .delete()
         .from(StoreDirection)
-        .where('id = :id', {id: direction_id})
+        .where('id IN (:id)', {id: direction_id})
         .execute()
         console.log(result);
         
