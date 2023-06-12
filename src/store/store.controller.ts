@@ -84,7 +84,7 @@ export class StoreController {
         @Body() dto: SetDirectionDto,
         @CurrentUser() user: CurrentUserDto, 
     ) {        
-        await this.storeService.setDirection(dto.url, user.sub)
+        await this.storeService.setDirection(dto, user.sub)
         return
     }
 

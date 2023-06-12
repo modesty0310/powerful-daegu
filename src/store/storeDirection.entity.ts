@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -24,5 +24,26 @@ export class StoreDirection {
     })
     @Column()
     @IsString()
+    @IsNotEmpty()
     url: string
+
+    @ApiProperty({
+        description: '시작점 이름',
+        example: '수성구',
+        type: String
+    })
+    @Column()
+    @IsString()
+    @IsNotEmpty()
+    start: string
+
+    @ApiProperty({
+        description: '도착점 이름',
+        example: '동구',
+        type: String
+    })
+    @Column()
+    @IsString()
+    @IsNotEmpty()
+    goal: string
 }

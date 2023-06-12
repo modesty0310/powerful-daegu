@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { User } from 'src/users/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { GetSearchDto } from './dto/getSearch.dto';
+import { SetDirectionDto } from './dto/setDirection.dto';
 import { StoreRepository } from './store.repository';
 
 @Injectable()
@@ -52,8 +53,8 @@ export class StoreService {
         return this.storeRepository.getAllStoreLike(user_id)
     }
 
-    async setDirection(url: string, user_id: BigInt) {
-        await this.storeRepository.setDirection(url, user_id);
+    async setDirection(dto: SetDirectionDto, user_id: BigInt) {
+        await this.storeRepository.setDirection(dto, user_id);
     }
 
     async deleteDirection(direction_id: BigInt[], user_id: BigInt) {

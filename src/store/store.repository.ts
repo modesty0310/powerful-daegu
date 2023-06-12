@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/users.entity";
 import { Like, Repository } from "typeorm";
 import { GetSearchDto } from "./dto/getSearch.dto";
+import { SetDirectionDto } from "./dto/setDirection.dto";
 import { Store } from "./store.entity";
 import { StoreDirection } from "./storeDirection.entity";
 import { StoreLike } from "./storeLike.entity";
@@ -182,10 +183,10 @@ export class StoreRepository {
         
     }
 
-    async setDirection(url: string, user_id: BigInt) {
+    async setDirection(dto: SetDirectionDto, user_id: BigInt) {
         const like = await this.directionRepository.createQueryBuilder('direction')
         .select()
-        .where('direction.url = :url', {url})
+        .where('direction.url = :url', {url: dto.url})
         .andWhere('direction.user = :user_id', {user_id})
         .getOne();
 
@@ -196,7 +197,9 @@ export class StoreRepository {
         .into(StoreDirection)
         .values({
             user: {id: user_id},
-            url
+            url: dto.url,
+            start: dto.start,
+            goal: dto.goal
         })
         .execute()        
     }
