@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { CommonEntity } from "src/common/entities/common.entity";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Store } from "./store.entity";
 
 @Entity()
-export class StoreLike {
+export class StoreLike extends CommonEntity {
     @PrimaryGeneratedColumn('increment')
     id: BigInt
 

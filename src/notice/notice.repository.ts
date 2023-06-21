@@ -90,7 +90,7 @@ export class NoticeRepository {
             order: {createdAt: 'DESC'},
             skip: (page - 1) * 10,
             take: 10,
-        })
+        });
         
         return result;
     }
