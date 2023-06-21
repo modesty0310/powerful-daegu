@@ -142,6 +142,7 @@ export class StoreRepository {
         .values({
             user: {id: user_id},
             store: {id: store_id},
+            createdAt: new Date()
         })
         .execute()        
     }
