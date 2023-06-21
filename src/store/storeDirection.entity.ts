@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
+import { CommonEntity } from "src/common/entities/common.entity";
 import { User } from "src/users/users.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class StoreDirection {
+export class StoreDirection extends CommonEntity {
     @ApiProperty({
         description: '저장 경로 아이디',
         example: '1',

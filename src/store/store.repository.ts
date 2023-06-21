@@ -200,7 +200,8 @@ export class StoreRepository {
             user: {id: user_id},
             url: dto.url,
             start: dto.start,
-            goal: dto.goal
+            goal: dto.goal,
+            createdAt: new Date()
         })
         .execute()        
     }
